@@ -1,0 +1,38 @@
+#compdef mac
+
+# Zsh completion for mac CLI
+
+_mac() {
+  local state
+  local -a commands
+  local cache_file="${XDG_CACHE_HOME:-$HOME/.cache}/mac-cli/commands"
+  local mac_bin
+  mac_bin=$(command -v mac)
+
+  # Check if cache exists and is up-to-date
+  if [[ ! -f "$cache_file" ]] || [[ "$mac_bin" -nt "$cache_file" ]]; then
+    mkdir -p "$(dirname "$cache_file")"
+    # Extract COMMANDS array from mac script
+    commands=($(grep -A 100 '^COMMANDS=(' "$mac_bin" | grep -B 100 '^)' | grep -E "^\s*['\"][^'\"]+['\"]" | sed -E "s/^\s*['\"]([^'\"]+)['\"]/\1/"))
+    # Write to cache
+    printf '%s\n' "${commands[@]}" > "$cache_file"
+  else
+    # Read from cache
+    commands=($(cat "$cache_file"))
+  fi
+
+  _arguments -s -S \
+    '1:command:->commands' \
+    '*:args:->args'
+
+  case "$state" in
+    commands)
+      _describe -t commands 'mac commands' commands && return 0
+      ;;
+    args)
+      # Additional argument handling can be added here if needed
+      ;;
+  esac
+}
+
+_mac

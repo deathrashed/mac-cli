@@ -7,7 +7,7 @@ _mac() {
     COMPREPLY=()
     _get_comp_words_by_ref -n : cur
 
-    MACWORDS=$(awk "/COMMANDS=/,/#/" < /usr/local/bin/mac  | tail -n +2 | sed '/)/d;/#/d')
+    MACWORDS=$(awk "/COMMANDS=/,/#/" < "$(command -v mac)"  | tail -n +2 | sed '/)/d;/#/d')
 
     COMPREPLY=( $( compgen -W "$MACWORDS" -- "$cur" ) )
 

@@ -14,10 +14,26 @@ case "$fn" in
 
     # Add DNS server
     "dns:add")
-        if [[ $2 =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]
-        then
+        if [[ $2 =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Adding DNS server $2"
-            sudo sh -c "echo nameserver '${2}' >> /etc/resolv.conf"
+            local service
+            service=$(networksetup -listallnetworkservices | grep -i wifi | head -n1)
+            if [ -z "$service" ]; then
+                service=$(networksetup -listallnetworkservices | grep -i ethernet | head -n1)
+            fi
+            if [ -z "$service" ]; then
+                echo "${RED}Could not find Wi-Fi or Ethernet service${NC}"
+                exit 1
+            fi
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}networksetup -setdnsservers \"$service\" $2\n\n${NC}"
+            fi
+            read -p "Confirm adding DNS server $2 to $service interface? (y/N) " confirm
+            if [[ "$confirm" =~ ^[yY]$ ]]; then
+                sudo networksetup -setdnsservers "$service" "$2"
+            else
+                echo "DNS server addition cancelled."
+            fi
         else
             echo "Please provide a valid DNS server address to add."
             exit 1
@@ -26,10 +42,32 @@ case "$fn" in
 
     # Remove DNS server
     "dns:remove")
-        if [[ $2 =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]
-        then
+        if [[ $2 =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Deleting DNS server ${2}..."
-            sudo sed -i "" "/${2}/d" /etc/resolv.conf
+            local service
+            service=$(networksetup -listallnetworkservices | grep -i wifi | head -n1)
+            if [ -z "$service" ]; then
+                service=$(networksetup -listallnetworkservices | grep -i ethernet | head -n1)
+            fi
+            if [ -z "$service" ]; then
+                echo "${RED}Could not find Wi-Fi or Ethernet service${NC}"
+                exit 1
+            fi
+            local current_dns
+            current_dns=$(networksetup -getdnsservers "$service" | grep -v "$2")
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}networksetup -setdnsservers \"$service\" $current_dns\n\n${NC}"
+            fi
+            read -p "Confirm removing DNS server $2 from $service interface? (y/N) " confirm
+            if [[ "$confirm" =~ ^[yY]$ ]]; then
+                if [ -z "$current_dns" ]; then
+                    sudo networksetup -setdnsservers "$service" empty
+                else
+                    sudo networksetup -setdnsservers "$service" $current_dns
+                fi
+            else
+                echo "DNS server removal cancelled."
+            fi
         else
             echo "Please provide a valid DNS server address to remove."
             exit 1

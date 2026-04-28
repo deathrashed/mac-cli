@@ -10,9 +10,9 @@ case "$fn" in
     "memory")
 
         if [ "$echocommand" == "true" ]; then
-            echo "${GREEN}top -o MEM \n\n${NC}"
+            echo "${GREEN}ps aux | sort -nrk 4 | head -n 10 \n\n${NC}"
         fi
-        top -o MEM
+        ps aux | sort -nrk 4 | head -n 10
     ;;
 
 

@@ -18,9 +18,9 @@ case "$fn" in
 
         echo "Getting list of used ports..."
         if [ "$echocommand" == "true" ]; then
-            echo "${GREEN}sudo lsof -iTCP -sTCP:LISTEN -P\n\n${NC}"
+            echo "${GREEN}lsof -nP -iTCP -sTCP:LISTEN\n\n${NC}"
         fi
-        sudo lsof -iTCP -sTCP:LISTEN -P
+        lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null || { echo "Some ports may require sudo access."; read -p "Use sudo for full list? (y/N) " confirm; if [[ "$confirm" =~ ^[yY]$ ]]; then sudo lsof -nP -iTCP -sTCP:LISTEN; else echo "Operation limited to non-sudo ports."; fi; }
     ;;
 
 

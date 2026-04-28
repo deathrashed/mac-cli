@@ -17,9 +17,15 @@ case "$fn" in
 
         echo "Updating macOS..."
         if [ "$echocommand" == "true" ]; then
-            echo "${GREEN}sudo softwareupdate -i -a;\n${NC}"
+            echo "${GREEN}softwareupdate -l;\n${NC}"
         fi
-        sudo softwareupdate -i -a;
+        softwareupdate -l
+        read -p "Confirm installing all macOS updates? (y/N) " confirm
+        if [[ "$confirm" =~ ^[yY]$ ]]; then
+            sudo softwareupdate -i -a;
+        else
+            echo "macOS update cancelled."
+        fi
 
         echo "Updating Homebrew and its installed packages..."
         if [ "$echocommand" == "true" ]; then
@@ -57,14 +63,6 @@ case "$fn" in
                 echo "${GREEN}pip3 list --outdated --local | tail -n +3 | awk '{print \$1}' | xargs -n1 pip3 install -U\n${NC}"
             fi
             pip3 list --outdated --local | tail -n +3 | awk '{print $1}' | xargs -n1 pip3 install -U
-        fi
-
-        if [ -f /usr/local/bin/apm ]; then
-            echo "Updating Atom Packages..."
-            if [ "$echocommand" == "true" ]; then
-                echo "${GREEN}apm upgrade --no-confirm\n${NC}"
-            fi
-            apm upgrade --no-confirm
         fi
     ;;
 
@@ -160,7 +158,12 @@ case "$fn" in
         if [ "$echocommand" == "true" ]; then
             echo "${GREEN}defaults write com.apple.finder AppleShowAllFiles YES; killall Finder\n\n${NC}"
         fi
-        defaults write com.apple.finder AppleShowAllFiles YES; killall Finder
+        read -p "Confirm showing hidden files? (y/N) " confirm
+        if [[ "$confirm" =~ ^[yY]$ ]]; then
+            defaults write com.apple.finder AppleShowAllFiles YES; killall Finder
+        else
+            echo "Operation cancelled."
+        fi
     ;;
 
 
@@ -169,7 +172,12 @@ case "$fn" in
         if [ "$echocommand" == "true" ]; then
             echo "${GREEN}defaults write com.apple.finder AppleShowAllFiles NO; killall Finder\n\n${NC}"
         fi
-        defaults write com.apple.finder AppleShowAllFiles NO; killall Finder
+        read -p "Confirm hiding hidden files? (y/N) " confirm
+        if [[ "$confirm" =~ ^[yY]$ ]]; then
+            defaults write com.apple.finder AppleShowAllFiles NO; killall Finder
+        else
+            echo "Operation cancelled."
+        fi
     ;;
 
 
@@ -424,5 +432,18 @@ case "$fn" in
         fi
     ;;
 
+
+    # Empty trash
+    "trash:empty")
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}osascript -e 'tell application \"Finder\" to empty trash'\n\n${NC}"
+        fi
+        read -p "Confirm emptying trash? (y/N) " confirm
+        if [[ "$confirm" =~ ^[yY]$ ]]; then
+            osascript -e 'tell application "Finder" to empty trash'
+        else
+            echo "Trash emptying cancelled."
+        fi
+    ;;
 
 esac

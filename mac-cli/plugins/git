@@ -170,10 +170,12 @@ case "$fn" in
     # Get size of current Git repository
     "git:size")
 
-        git bundle create tmp.bundle --all
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}du -sh .git; git count-objects -vH\n\n${NC}"
+        fi
         echo "\n\nCurrent Git repository size: "
-        du -sh tmp.bundle
-        rm tmp.bundle
+        du -sh .git
+        git count-objects -vH
     ;;
 
 
