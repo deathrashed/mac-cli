@@ -23,9 +23,9 @@ case "$fn" in
         echo "Calculating CAGR for investment from $beginning_value to $ending_value over $years years..."
         if command -v bc &> /dev/null; then
             if [ "$echocommand" == "true" ]; then
-                echo "${GREEN}bc <<< "scale=4; ((($ending_value / $beginning_value) ^ (1 / $years)) - 1) * 100"\n${NC}"
+                echo "${GREEN}bc <<< 'scale=4; (($ending_value / $beginning_value) ^ (1 / $years)) - 1 * 100'\n${NC}"
             fi
-            cagr=$(bc <<< "scale=4; ((($ending_value / $beginning_value) ^ (1 / $years)) - 1) * 100")
+            cagr=$(bc <<< "scale=4; (($ending_value / $beginning_value) ^ (1 / $years)) - 1 * 100")
             echo "CAGR: $cagr%"
         else
             echo "${RED}bc is not installed. Please install bc first.${NC}"
@@ -47,7 +47,7 @@ case "$fn" in
         echo "Calculating simple interest for principal $principal at $rate% for $time years..."
         if command -v bc &> /dev/null; then
             if [ "$echocommand" == "true" ]; then
-                echo "${GREEN}bc <<< "scale=2; ($principal * $rate * $time) / 100"\n${NC}"
+                echo "${GREEN}bc <<< 'scale=2; ($principal * $rate * $time) / 100'\n${NC}"
             fi
             interest=$(bc <<< "scale=2; ($principal * $rate * $time) / 100")
             echo "Simple Interest: \$$interest"
