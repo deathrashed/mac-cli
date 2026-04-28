@@ -11,8 +11,8 @@
 #
 ###########################################################################
 
-# Mac CLI directory
-MAC="$(dirname "$0")"
+# Define the base directory for mac-cli
+MAC_CLI_BASE_DIR="${HOME}/.mac-cli"
 
 #--------------------------------------------------------------------
 # Configuration
@@ -221,7 +221,7 @@ fi
 #--------------------------------------------------------------------
 
 # Documentation / Help
-source "$MAC/mac-cli/misc/help"
+source "${MAC_CLI_BASE_DIR}/misc/help"
 
 #--------------------------------------------------------------------
 # Catch command not found
@@ -243,12 +243,12 @@ fi
 # Plugins
 #--------------------------------------------------------------------
 
-source "$MAC/mac-cli/plugins/brew"
-source "$MAC/mac-cli/plugins/general"
-source "$MAC/mac-cli/plugins/git"
-source "$MAC/mac-cli/plugins/network"
-source "$MAC/mac-cli/plugins/dns"
-source "$MAC/mac-cli/plugins/performance"
-source "$MAC/mac-cli/plugins/search"
-source "$MAC/mac-cli/plugins/ssh"
-source "$MAC/mac-cli/plugins/volume"
+# Ensure the directory structure exists
+mkdir -p "${MAC_CLI_BASE_DIR}/completion/zsh" "${MAC_CLI_BASE_DIR}/misc" "${MAC_CLI_BASE_DIR}/plugins"
+
+# Load all plugin files
+for plugin in "${MAC_CLI_BASE_DIR}/plugins"/*; do
+    if [ -f "$plugin" ]; then
+        source "$plugin"
+    fi
+done
