@@ -1,0 +1,93 @@
+#!/bin/sh
+
+#--------------------------------------------------------------------
+# Web Utilities
+#--------------------------------------------------------------------
+
+# Web operations plugin for mac-cli
+# This plugin provides tools for web-related tasks and downloads
+
+case "$fn" in
+
+    # Download a video from a URL using yt-dlp or youtube-dl
+    "web:download-video")
+        # Specify the URL of the video to download
+        local url="$firstParameter"
+        if [ -z "$url" ]; then
+            echo "Please specify a URL to download video from."
+            echo "E.g.: mac web:download-video https://youtube.com/watch?v=example"
+            exit 1
+        fi
+        echo "Downloading video from $url..."
+        if command -v yt-dlp &> /dev/null; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}yt-dlp '$url'\n${NC}"
+            fi
+            yt-dlp "$url"
+        elif command -v youtube-dl &> /dev/null; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}youtube-dl '$url'\n${NC}"
+            fi
+            youtube-dl "$url"
+        else
+            echo "${RED}yt-dlp or youtube-dl is not installed. Please install one of them first.${NC}"
+            exit 1
+        fi
+    ;;
+
+    # Shorten a URL using tinyurl
+    "web:shorten-url")
+        # Specify the URL to shorten
+        local url="$firstParameter"
+        if [ -z "$url" ]; then
+            echo "Please specify a URL to shorten."
+            echo "E.g.: mac web:shorten-url https://example.com/long/path"
+            exit 1
+        fi
+        echo "Shortening URL: $url..."
+        if command -v curl &> /dev/null; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}curl -s 'https://tinyurl.com/api-create.php?url=$url'\n${NC}"
+            fi
+            shortened=$(curl -s "https://tinyurl.com/api-create.php?url=$url")
+            if [ -n "$shortened" ] && echo "$shortened" | grep -q '^https://tinyurl.com/'; then
+                echo "Shortened URL: $shortened"
+            else
+                echo "${RED}Failed to shorten URL. Response: $shortened${NC}"
+            fi
+        else
+            echo "${RED}curl is not installed. Please install curl first.${NC}"
+            exit 1
+        fi
+    ;;
+
+    # Get current weather information
+    "web:weather")
+        # Specify the location for weather information (optional)
+        local location="$firstParameter"
+        if [ -z "$location" ]; then
+            echo "Getting weather for current location..."
+            if command -v curl &> /dev/null; then
+                if [ "$echocommand" == "true" ]; then
+                    echo "${GREEN}curl -s 'wttr.in?format=3'\n${NC}"
+                fi
+                curl -s "wttr.in?format=3"
+            else
+                echo "${RED}curl is not installed. Please install curl first.${NC}"
+                exit 1
+            fi
+        else
+            echo "Getting weather for $location..."
+            if command -v curl &> /dev/null; then
+                if [ "$echocommand" == "true" ]; then
+                    echo "${GREEN}curl -s 'wttr.in/$location?format=3'\n${NC}"
+                fi
+                curl -s "wttr.in/$location?format=3"
+            else
+                echo "${RED}curl is not installed. Please install curl first.${NC}"
+                exit 1
+            fi
+        fi
+    ;;
+
+esac

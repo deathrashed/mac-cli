@@ -21,8 +21,7 @@
 
 ### Introduction
 
-Mac CLI is the ultimate tool for developers to manage their Mac. It provides a huge set of command line commands that automate the usage of your macOS system.
-When you run a function, the executed command is displayed and that helps you memorize each of the Utilities for future usage.
+Mac CLI is the ultimate tool for developers to manage their Mac. It provides a huge set of command line commands that automate the usage of your macOS system. When you run a function, the executed command is displayed, helping you memorize each of the utilities for future usage.
 
 The tool is designed to be easily extendable with additional commands through the use of plugins. To view the currently available commands, you can navigate to the plugins folder and explore the different categories: [/mac-cli/plugins](https://github.com/guarinogabriel/mac-cli/tree/master/mac-cli/plugins)
 
@@ -38,10 +37,67 @@ Via curl
 > `sh -c "$(curl -fsSL https://raw.githubusercontent.com/guarinogabriel/mac-cli/master/mac-cli/tools/install)"`
 
 Via wget
-> `sh -c "$(wget https://raw.githubusercontent.com/guarinogabriel/mac-cli/master/mac-cli/tools/install -O -)"`
+> `sh -c "$(wget -qO- https://raw.githubusercontent.com/guarinogabriel/mac-cli/master/mac-cli/tools/install)"`
 
-Then, re-open your terminal client. You will be able to run all the commands listed below, for example:
-> `mac help`
+---
+
+### Features
+
+Mac CLI offers a wide range of utilities categorized into plugins for easy management and extension. Here are some of the key categories and commands:
+
+- **General Utilities**: Commands for system management, file operations, and more.
+- **Search**: Tools for searching files, directories, content, and documentation (`search:file`, `search:spotlight`, `search:dash`).
+- **Network**: Network diagnostics and information (`network:speedtest`, `network:ping`, `network:wifi-password`).
+- **File**: File manipulation and management (`file:clean-names`, `file:backup`, `file:compress`).
+- **Archive**: Archive creation and extraction (`archive:tar`, `archive:zstd`, `archive:extract`).
+- **Media**: Media file processing (`media:clip`, `media:to-avif`, `media:upload-imgbb`).
+- **System**: System resource management (`system:kill`, `system:cleanup-dsstore`, `system:usage`).
+- **URL**: URL shortcut creation (`url:create`, `url:create-force`).
+- **Regex**: Text extraction and manipulation using regular expressions (`regex:urls`, `regex:emails`).
+- **Text**: Text processing and URL utilities (`text:urlencode`, `text:shortenurl`).
+- **Productivity**: Task and time management (`productivity:todo`, `productivity:note`, `productivity:timer`).
+- **Dev**: Developer tools for Git and Xcode (`dev:git-clear`, `dev:gitignore`, `dev:xcode-clear`).
+- **Web**: Web-related tasks and downloads (`web:download-video`, `web:shorten-url`, `web:weather`).
+- **Convert**: Conversion tools for temperature and formats (`convert:c-to-f`, `convert:json-to-yaml`).
+- **Finance**: Financial calculations (`finance:cagr`, `finance:simple-interest`).
+
+To see the full list of commands, run `mac list` or explore the plugins directory.
+
+---
+
+### Usage
+
+Once installed, you can run Mac CLI commands using the `mac` prefix followed by the command name and any parameters:
+
+```bash
+mac system:usage
+mac file:clean-names ./directory
+mac web:download-video https://youtube.com/watch?v=example
+```
+
+Use `mac help` to view all available commands and categories.
+
+---
+
+### Extending Mac CLI
+
+Mac CLI is built with a plugin architecture, making it easy to add new commands. To create a new plugin:
+
+1. Add a new shell script in the `mac-cli/plugins/` directory with a unique name.
+2. Follow the structure of existing plugins, using `case "$fn" in` to define commands.
+3. Update the `COMMANDS` array in the main `mac` script to include your new commands.
+4. Update the help content in `mac-cli/misc/help` to document your commands.
+
+Feel free to contribute by submitting pull requests with new plugins or enhancements to existing ones.
+
+---
+
+### Community and Support
+
+Join the Mac CLI community for discussions, support, and contributions:
+
+- GitHub: [guarinogabriel/mac-cli](https://github.com/guarinogabriel/mac-cli)
+- Issues: [Report bugs or suggest features](https://github.com/guarinogabriel/mac-cli/issues)
 
 ---
 

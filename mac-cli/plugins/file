@@ -1,0 +1,129 @@
+#!/bin/sh
+
+#--------------------------------------------------------------------
+# File Utilities
+#--------------------------------------------------------------------
+
+# File operations plugin for mac-cli
+# This plugin provides tools for managing and manipulating files and directories
+
+case "$fn" in
+
+    # Clean filenames by removing spaces and special characters
+    "file:clean-names")
+        # Specify the directory to clean filenames in, defaults to current directory
+        local dir="${firstParameter:-.}"
+        local dry_run=false
+        if [[ "$secondParameter" == "--dry-run" ]]; then
+            dry_run=true
+        fi
+        echo "Cleaning filenames in $dir..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}find \"$dir\" -type f -name '* *' -o -name '*[[:punct:]]*'\n${NC}"
+        fi
+        if [ "$dry_run" == "true" ]; then
+            find "$dir" -type f -name '* *' -o -name '*[[:punct:]]*' -exec echo "Would rename: {} to $(echo {} | tr ' ' '-' | tr -d '[:punct:]')" \;
+        else
+            find "$dir" -type f -name '* *' -o -name '*[[:punct:]]*' -exec sh -c 'mv "$1" "$(echo "$1" | tr " " "-" | tr -d "[:punct:]")"' sh {} \;
+        fi
+    ;;
+
+    # Rename a single file to remove spaces and special characters
+    "file:rename-clean")
+        # Specify the file to rename
+        local file="$firstParameter"
+        if [ -z "$file" ]; then
+            echo "Please specify a file to rename."
+            echo "E.g.: mac file:rename-clean file.txt"
+            exit 1
+        fi
+        local new_name=$(echo "$file" | tr ' ' '-' | tr -d '[:punct:]')
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}mv \"$file\" \"$new_name\"\n${NC}"
+        fi
+        mv "$file" "$new_name"
+        echo "Renamed $file to $new_name"
+    ;;
+
+    # Backup a file or directory to a timestamped folder
+    "file:backup")
+        # Specify the target to backup, defaults to current directory
+        local target="${firstParameter:-.}"
+        local backup_dir="~/Backups/$(date +%Y%m%d-%H%M%S)"
+        echo "Backing up $target to $backup_dir..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}mkdir -p \"$backup_dir\"; cp -r \"$target\" \"$backup_dir\"\n${NC}"
+        fi
+        mkdir -p "$backup_dir"
+        cp -r "$target" "$backup_dir"
+        echo "Backup completed to $backup_dir"
+    ;;
+
+    # Move a file and create a symbolic link to the new location
+    "file:move-link")
+        # Specify source and destination for moving and linking
+        local source="$firstParameter"
+        local dest="$secondParameter"
+        if [ -z "$source" ] || [ -z "$dest" ]; then
+            echo "Please specify source and destination."
+            echo "E.g.: mac file:move-link source dest"
+            exit 1
+        fi
+        echo "Moving $source to $dest and linking back..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}mv \"$source\" \"$dest\"; ln -s \"$dest\" \"$source\"\n${NC}"
+        fi
+        mv "$source" "$dest"
+        ln -s "$dest" "$source"
+        echo "Moved and linked $source to $dest"
+    ;;
+
+    # Compress a file or directory to a tar.gz archive
+    "file:compress")
+        # Specify the file or directory to compress
+        local file="$firstParameter"
+        if [ -z "$file" ]; then
+            echo "Please specify a file or directory to compress."
+            echo "E.g.: mac file:compress file.txt"
+            exit 1
+        fi
+        echo "Compressing $file..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}tar -czvf \"$file.tar.gz\" \"$file\"\n${NC}"
+        fi
+        tar -czvf "$file.tar.gz" "$file"
+        echo "Compressed to $file.tar.gz"
+    ;;
+
+    # Extract a compressed file
+    "file:extract")
+        # Specify the compressed file to extract
+        local file="$firstParameter"
+        if [ -z "$file" ]; then
+            echo "Please specify a file to extract."
+            echo "E.g.: mac file:extract file.tar.gz"
+            exit 1
+        fi
+        echo "Extracting $file..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}tar -xzvf \"$file\"\n${NC}"
+        fi
+        tar -xzvf "$file"
+        echo "Extracted $file"
+    ;;
+
+    # Convert a file to a data URL for embedding
+    "file:dataurl")
+        # Specify the file to convert to a data URL
+        local file="$firstParameter"
+        if [ -z "$file" ]; then
+            echo "Please specify a file to convert to data URL."
+            echo "E.g.: mac file:dataurl image.png"
+            exit 1
+        fi
+        local mime_type=$(file -b --mime-type "$file")
+        local base64_data=$(base64 < "$file")
+        echo "data:$mime_type;base64,$base64_data"
+    ;;
+
+esac

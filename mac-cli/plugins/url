@@ -1,0 +1,63 @@
+#!/bin/sh
+
+#--------------------------------------------------------------------
+# URL Utilities
+#--------------------------------------------------------------------
+
+# URL utilities plugin for mac-cli
+# This plugin provides tools for creating URL shortcuts on the desktop
+
+case "$fn" in
+
+    # Create a URL shortcut on the desktop
+    "url:create")
+        # Specify the URL and optional title for the shortcut
+        local url="$firstParameter"
+        local title="${secondParameter:-}"
+        if [ -z "$url" ]; then
+            echo "Please specify a URL to create a shortcut for."
+            echo "E.g.: mac url:create https://example.com 'Example'"
+            exit 1
+        fi
+        local shortcut_file="$(basename "$url" | tr -d '[:punct:]').webloc"
+        if [ -n "$title" ]; then
+            shortcut_file="$(echo "$title" | tr -d '[:punct:]').webloc"
+        fi
+        echo "Creating URL shortcut for $url..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}osascript -e 'tell application \"Finder\" to make new internet location file at desktop to \"$url\" with properties {name:\"$shortcut_file\""}'\n${NC}"
+        fi
+        osascript -e "tell application \"Finder\" to make new internet location file at desktop to \"$url\" with properties {name:\"$shortcut_file\""}"
+        echo "Shortcut created on desktop as $shortcut_file"
+    ;;
+
+    # Create a URL shortcut on the desktop, overwriting if it exists
+    "url:create-force")
+        # Specify the URL and optional title for the shortcut, force overwrite if exists
+        local url="$firstParameter"
+        local title="${secondParameter:-}"
+        if [ -z "$url" ]; then
+            echo "Please specify a URL to create a shortcut for."
+            echo "E.g.: mac url:create-force https://example.com 'Example'"
+            exit 1
+        fi
+        local shortcut_file="$(basename "$url" | tr -d '[:punct:]').webloc"
+        if [ -n "$title" ]; then
+            shortcut_file="$(echo "$title" | tr -d '[:punct:]').webloc"
+        fi
+        # Check if file exists and delete it
+        if [ -f "~/Desktop/$shortcut_file" ]; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}rm ~/Desktop/\"$shortcut_file\"\n${NC}"
+            fi
+            rm "~/Desktop/$shortcut_file"
+        fi
+        echo "Creating URL shortcut for $url (overwriting if exists)..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}osascript -e 'tell application \"Finder\" to make new internet location file at desktop to \"$url\" with properties {name:\"$shortcut_file\""}'\n${NC}"
+        fi
+        osascript -e "tell application \"Finder\" to make new internet location file at desktop to \"$url\" with properties {name:\"$shortcut_file\""}"
+        echo "Shortcut created on desktop as $shortcut_file"
+    ;;
+
+esac

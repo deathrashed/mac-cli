@@ -1,0 +1,117 @@
+#!/bin/sh
+
+#--------------------------------------------------------------------
+# System Utilities
+#--------------------------------------------------------------------
+
+# System utilities plugin for mac-cli
+# This plugin provides tools for managing system resources and processes
+
+case "$fn" in
+
+    # Kill processes matching a name or PID
+    "system:kill")
+        # Specify the pattern or PID to search for and terminate
+        local pattern="$firstParameter"
+        if [ -z "$pattern" ]; then
+            echo "Please specify a process name or PID to kill."
+            echo "E.g.: mac system:kill firefox"
+            exit 1
+        fi
+        echo "Killing processes matching '$pattern'..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}ps aux | grep -i \"$pattern\" | grep -v grep | awk '{print \$2}' | xargs kill -9\n${NC}"
+        fi
+        read -p "Confirm killing processes matching '$pattern'? (y/N) " confirm
+        if [[ "$confirm" =~ ^[yY]$ ]]; then
+            ps aux | grep -i "$pattern" | grep -v grep | awk '{print $2}' | xargs kill -9 2>/dev/null
+            echo "Processes matching '$pattern' killed."
+        else
+            echo "Operation cancelled."
+        fi
+    ;;
+
+    # List open network ports
+    "system:ports")
+        # Display all open TCP ports currently listening
+        echo "Listing open ports..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}lsof -nP -iTCP -sTCP:LISTEN\n${NC}"
+        fi
+        lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null || { echo "Some ports may require sudo access."; read -p "Use sudo for full list? (y/N) " confirm; if [[ "$confirm" =~ ^[yY]$ ]]; then sudo lsof -nP -iTCP -sTCP:LISTEN; else echo "Operation limited to non-sudo ports."; fi; }
+    ;;
+
+    # List top processes by memory usage
+    "system:processes")
+        # Show the top 10 processes consuming the most memory
+        echo "Listing top processes by memory usage..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}ps aux | sort -nrk 4 | head -n 10\n${NC}"
+        fi
+        ps aux | sort -nrk 4 | head -n 10
+    ;;
+
+    # Clean up .DS_Store files recursively
+    "system:cleanup-dsstore")
+        # Remove macOS-specific .DS_Store files from the current directory and subdirectories
+        echo "Cleaning up .DS_Store files..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}find . -type f -name '.DS_Store' -delete\n${NC}"
+        fi
+        read -p "Confirm deleting all .DS_Store files in current directory and subdirectories? (y/N) " confirm
+        if [[ "$confirm" =~ ^[yY]$ ]]; then
+            find . -type f -name '.DS_Store' -delete
+            echo ".DS_Store files deleted."
+        else
+            echo "Operation cancelled."
+        fi
+    ;;
+
+    # Unmount all external volumes
+    "system:unmount-all")
+        # Safely unmount all external drives and volumes
+        echo "Unmounting all external volumes..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}diskutil list | grep external | awk '{print \$1}' | xargs -I {} diskutil unmount {}\n${NC}"
+        fi
+        read -p "Confirm unmounting all external volumes? (y/N) " confirm
+        if [[ "$confirm" =~ ^[yY]$ ]]; then
+            diskutil list | grep external | awk '{print $1}' | xargs -I {} diskutil unmount {}
+            echo "External volumes unmounted."
+        else
+            echo "Operation cancelled."
+        fi
+    ;;
+
+    # Clean system by removing temporary files and caches
+    "system:clean")
+        # Remove common temporary files and caches to free up space
+        echo "Cleaning system temporary files and caches..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}rm -rf ~/Library/Caches/* /Library/Caches/* 2>/dev/null\n${NC}"
+        fi
+        read -p "Confirm cleaning system caches and temporary files? (y/N) " confirm
+        if [[ "$confirm" =~ ^[yY]$ ]]; then
+            rm -rf ~/Library/Caches/* /Library/Caches/* 2>/dev/null
+            echo "System caches and temporary files cleaned."
+        else
+            echo "Operation cancelled."
+        fi
+    ;;
+
+    # Display detailed system usage statistics
+    "system:usage")
+        # Show detailed statistics about CPU, memory, and disk usage
+        echo "Displaying system usage statistics..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}top -l 1 -n 5 | head -n 7\n${NC}"
+        fi
+        top -l 1 -n 5 | head -n 7
+        echo "\nDisk Usage:"
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}df -h /\n${NC}"
+        fi
+        df -h /
+    ;;
+
+esac

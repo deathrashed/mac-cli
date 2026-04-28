@@ -1,0 +1,98 @@
+#!/bin/sh
+
+#--------------------------------------------------------------------
+# Archive Utilities
+#--------------------------------------------------------------------
+
+# Archive operations plugin for mac-cli
+# This plugin provides tools for creating and extracting various archive formats
+
+case "$fn" in
+
+    # Create a tar.gz archive of a file or directory
+    "archive:tar")
+        # Specify the target to archive and optional output filename
+        local target="${firstParameter:-.}"
+        local output="${secondParameter:-$(basename "$target").tar.gz}"
+        echo "Creating tar archive of $target as $output..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}tar -czvf \"$output\" \"$target\"\n${NC}"
+        fi
+        tar -czvf "$output" "$target"
+        echo "Archive created at $output"
+    ;;
+
+    # Create a zstd compressed tar archive for better compression
+    "archive:zstd")
+        # Specify the target to archive and optional output filename
+        local target="${firstParameter:-.}"
+        local output="${secondParameter:-$(basename "$target").tar.zst}"
+        echo "Creating zstd compressed tar archive of $target as $output..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}tar -cvf - \"$target\" | zstd -o \"$output\"\n${NC}"
+        fi
+        if command -v zstd &> /dev/null; then
+            tar -cvf - "$target" | zstd -o "$output"
+            echo "Archive created at $output"
+        else
+            echo "${RED}zstd is not installed. Please install zstd first.${NC}"
+            exit 1
+        fi
+    ;;
+
+    # Create a fast gzip compressed tar archive with lower compression
+    "archive:gz-fast")
+        # Specify the target to archive and optional output filename
+        local target="${firstParameter:-.}"
+        local output="${secondParameter:-$(basename "$target").tar.gz}"
+        echo "Creating fast gzip compressed tar archive of $target as $output..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}tar -cvf - \"$target\" | gzip -1 > \"$output\"\n${NC}"
+        fi
+        tar -cvf - "$target" | gzip -1 > "$output"
+        echo "Archive created at $output"
+    ;;
+
+    # Extract various archive formats
+    "archive:extract")
+        # Specify the archive file to extract
+        local file="$firstParameter"
+        if [ -z "$file" ]; then
+            echo "Please specify a file to extract."
+            echo "E.g.: mac archive:extract file.tar.gz"
+            exit 1
+        fi
+        echo "Extracting $file..."
+        case "$file" in
+            *.tar.gz|*.tgz)
+                if [ "$echocommand" == "true" ]; then
+                    echo "${GREEN}tar -xzvf \"$file\"\n${NC}"
+                fi
+                tar -xzvf "$file"
+                ;;
+            *.tar.zst|*.tzst)
+                if command -v zstd &> /dev/null; then
+                    if [ "$echocommand" == "true" ]; then
+                        echo "${GREEN}zstd -dc \"$file\" | tar -xvf -\n${NC}"
+                    fi
+                    zstd -dc "$file" | tar -xvf -
+                else
+                    echo "${RED}zstd is not installed. Please install zstd first.${NC}"
+                    exit 1
+                fi
+                ;;
+            *.zip)
+                if [ "$echocommand" == "true" ]; then
+                    echo "${GREEN}unzip \"$file\"\n${NC}"
+                fi
+                unzip "$file"
+                ;;
+            *)
+                echo "Unsupported archive type: $file"
+                exit 1
+                ;;
+        esac
+        echo "Extracted $file"
+    ;;
+
+esac

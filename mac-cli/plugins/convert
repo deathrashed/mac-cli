@@ -1,0 +1,154 @@
+#!/bin/sh
+
+#--------------------------------------------------------------------
+# Conversion Utilities
+#--------------------------------------------------------------------
+
+# Conversion operations plugin for mac-cli
+# This plugin provides tools for converting between different formats and units
+
+case "$fn" in
+
+    # Convert temperature from Celsius to Fahrenheit
+    "convert:c-to-f")
+        # Specify the temperature in Celsius to convert
+        local celsius="$firstParameter"
+        if [ -z "$celsius" ]; then
+            echo "Please specify a temperature in Celsius to convert to Fahrenheit."
+            echo "E.g.: mac convert:c-to-f 25"
+            exit 1
+        fi
+        echo "Converting $celsius°C to Fahrenheit..."
+        if command -v bc &> /dev/null; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}bc <<< "($celsius * 9/5) + 32"\n${NC}"
+            fi
+            fahrenheit=$(bc <<< "($celsius * 9/5) + 32")
+            echo "$celsius°C is $fahrenheit°F"
+        else
+            echo "${RED}bc is not installed. Please install bc first.${NC}"
+            exit 1
+        fi
+    ;;
+
+    # Convert temperature from Fahrenheit to Celsius
+    "convert:f-to-c")
+        # Specify the temperature in Fahrenheit to convert
+        local fahrenheit="$firstParameter"
+        if [ -z "$fahrenheit" ]; then
+            echo "Please specify a temperature in Fahrenheit to convert to Celsius."
+            echo "E.g.: mac convert:f-to-c 77"
+            exit 1
+        fi
+        echo "Converting $fahrenheit°F to Celsius..."
+        if command -v bc &> /dev/null; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}bc <<< "($fahrenheit - 32) * 5/9"\n${NC}"
+            fi
+            celsius=$(bc <<< "($fahrenheit - 32) * 5/9")
+            echo "$fahrenheit°F is $celsius°C"
+        else
+            echo "${RED}bc is not installed. Please install bc first.${NC}"
+            exit 1
+        fi
+    ;;
+
+    # Convert text to lowercase
+    "convert:to-lowercase")
+        # Specify the text to convert to lowercase or use piped input
+        local text="$firstParameter"
+        if [ -z "$text" ]; then
+            echo "Converting piped text to lowercase..."
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}tr '[:upper:]' '[:lower:]'\n${NC}"
+            fi
+            tr '[:upper:]' '[:lower:]' < /dev/stdin
+        else
+            echo "Converting '$text' to lowercase..."
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}echo '$text' | tr '[:upper:]' '[:lower:]'\n${NC}"
+            fi
+            echo "$text" | tr '[:upper:]' '[:lower:]'
+        fi
+    ;;
+
+    # Convert text to uppercase
+    "convert:to-uppercase")
+        # Specify the text to convert to uppercase or use piped input
+        local text="$firstParameter"
+        if [ -z "$text" ]; then
+            echo "Converting piped text to uppercase..."
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}tr '[:lower:]' '[:upper:]'\n${NC}"
+            fi
+            tr '[:lower:]' '[:upper:]' < /dev/stdin
+        else
+            echo "Converting '$text' to uppercase..."
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}echo '$text' | tr '[:lower:]' '[:upper:]'\n${NC}"
+            fi
+            echo "$text" | tr '[:lower:]' '[:upper:]'
+        fi
+    ;;
+
+    # Convert JSON to YAML (requires yq)
+    "convert:json-to-yaml")
+        # Specify the JSON file to convert or use piped input
+        local file="$firstParameter"
+        if [ -z "$file" ]; then
+            echo "Converting piped JSON to YAML..."
+            if command -v yq &> /dev/null; then
+                if [ "$echocommand" == "true" ]; then
+                    echo "${GREEN}yq e -P -\n${NC}"
+                fi
+                yq e -P -
+            else
+                echo "${RED}yq is not installed. Please install yq first.${NC}"
+                exit 1
+            fi
+        else
+            echo "Converting JSON file $file to YAML..."
+            if command -v yq &> /dev/null; then
+                if [ "$echocommand" == "true" ]; then
+                    echo "${GREEN}yq e -P '$file' > '${file%.json}.yaml'\n${NC}"
+                fi
+                yq e -P "$file" > "${file%.json}.yaml"
+                echo "Converted JSON to YAML in ${file%.json}.yaml"
+            else
+                echo "${RED}yq is not installed. Please install yq first.${NC}"
+                exit 1
+            fi
+        fi
+    ;;
+
+    # Convert YAML to JSON (requires yq)
+    "convert:yaml-to-json")
+        # Specify the YAML file to convert or use piped input
+        local file="$firstParameter"
+        if [ -z "$file" ]; then
+            echo "Converting piped YAML to JSON..."
+            if command -v yq &> /dev/null; then
+                if [ "$echocommand" == "true" ]; then
+                    echo "${GREEN}yq e -o json -\n${NC}"
+                fi
+                yq e -o json -
+            else
+                echo "${RED}yq is not installed. Please install yq first.${NC}"
+                exit 1
+            fi
+        else
+            echo "Converting YAML file $file to JSON..."
+            if command -v yq &> /dev/null; then
+                if [ "$echocommand" == "true" ]; then
+                    echo "${GREEN}yq e -o json '$file' > '${file%.yaml}.json'\n${NC}"
+                fi
+                yq e -o json "$file" > "${file%.yaml}.json"
+                echo "Converted YAML to JSON in ${file%.yaml}.json"
+            else
+                echo "${RED}yq is not installed. Please install yq first.${NC}"
+                exit 1
+            fi
+        fi
+    ;;
+
+esac

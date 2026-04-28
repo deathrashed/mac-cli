@@ -1,0 +1,60 @@
+#!/bin/sh
+
+#--------------------------------------------------------------------
+# Finance Utilities
+#--------------------------------------------------------------------
+
+# Finance operations plugin for mac-cli
+# This plugin provides tools for financial calculations and data retrieval
+
+case "$fn" in
+
+    # Calculate Compound Annual Growth Rate (CAGR)
+    "finance:cagr")
+        # Specify beginning value, ending value, and number of years
+        local beginning_value="$firstParameter"
+        local ending_value="$secondParameter"
+        local years="${3:-}"
+        if [ -z "$beginning_value" ] || [ -z "$ending_value" ] || [ -z "$years" ]; then
+            echo "Please specify beginning value, ending value, and number of years."
+            echo "E.g.: mac finance:cagr 1000 2000 5"
+            exit 1
+        fi
+        echo "Calculating CAGR for investment from $beginning_value to $ending_value over $years years..."
+        if command -v bc &> /dev/null; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}bc <<< "scale=4; ((($ending_value / $beginning_value) ^ (1 / $years)) - 1) * 100"\n${NC}"
+            fi
+            cagr=$(bc <<< "scale=4; ((($ending_value / $beginning_value) ^ (1 / $years)) - 1) * 100")
+            echo "CAGR: $cagr%"
+        else
+            echo "${RED}bc is not installed. Please install bc first.${NC}"
+            exit 1
+        fi
+    ;;
+
+    # Calculate simple interest
+    "finance:simple-interest")
+        # Specify principal amount, rate of interest, and time in years
+        local principal="$firstParameter"
+        local rate="$secondParameter"
+        local time="${3:-}"
+        if [ -z "$principal" ] || [ -z "$rate" ] || [ -z "$time" ]; then
+            echo "Please specify principal amount, rate of interest, and time in years."
+            echo "E.g.: mac finance:simple-interest 1000 5 2"
+            exit 1
+        fi
+        echo "Calculating simple interest for principal $principal at $rate% for $time years..."
+        if command -v bc &> /dev/null; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}bc <<< "scale=2; ($principal * $rate * $time) / 100"\n${NC}"
+            fi
+            interest=$(bc <<< "scale=2; ($principal * $rate * $time) / 100")
+            echo "Simple Interest: \$$interest"
+        else
+            echo "${RED}bc is not installed. Please install bc first.${NC}"
+            exit 1
+        fi
+    ;;
+
+esac

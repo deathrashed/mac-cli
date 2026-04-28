@@ -1,0 +1,168 @@
+#!/bin/sh
+
+#--------------------------------------------------------------------
+# Developer Utilities
+#--------------------------------------------------------------------
+
+# Developer operations plugin for mac-cli
+# This plugin provides tools for developers, including Git and code management
+
+case "$fn" in
+
+    # Clear Git changes, resetting to the last commit
+    "dev:git-clear")
+        echo "Clearing all Git changes and resetting to the last commit..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}git reset --hard && git clean -fd\n${NC}"
+        fi
+        read -p "Confirm clearing all changes? This cannot be undone. (y/N) " confirm
+        if [[ "$confirm" =~ ^[yY]$ ]]; then
+            git reset --hard && git clean -fd
+            echo "Git changes cleared."
+        else
+            echo "Operation cancelled."
+        fi
+    ;;
+
+    # Save Git changes as a stash
+    "dev:git-save")
+        echo "Saving Git changes as a stash..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}git stash push -m 'Saved changes on $(date)'\n${NC}"
+        fi
+        git stash push -m "Saved changes on $(date)"
+        echo "Changes saved to stash."
+    ;;
+
+    # View Git standup report for recent activity
+    "dev:git-standup")
+        echo "Generating Git standup report..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}git log --since='yesterday' --author=$(git config user.name) --pretty=format:'%C(yellow)%h%Creset - %Cgreen%ad%Creset %s' --date=short\n${NC}"
+        fi
+        git log --since="yesterday" --author="$(git config user.name)" --pretty=format:'%C(yellow)%h%Creset - %Cgreen%ad%Creset %s' --date=short
+    ;;
+
+    # Switch Git branch interactively if fzf is available
+    "dev:git-switch")
+        echo "Switching Git branch..."
+        if command -v fzf &> /dev/null; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}git checkout $(git branch | fzf)\n${NC}"
+            fi
+            branch=$(git branch | fzf)
+            if [ -n "$branch" ]; then
+                git checkout "$branch"
+                echo "Switched to branch $branch."
+            else
+                echo "No branch selected."
+            fi
+        else
+            echo "${RED}fzf is not installed. Falling back to manual branch selection.${NC}"
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}git branch\n${NC}"
+            fi
+            git branch
+            read -p "Enter branch name to switch to: " branch
+            if [ -n "$branch" ]; then
+                git checkout "$branch"
+                echo "Switched to branch $branch."
+            else
+                echo "No branch specified."
+            fi
+        fi
+    ;;
+
+    # Sync Git changes with remote repository
+    "dev:git-sync")
+        echo "Syncing Git changes with remote repository..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}git pull && git push\n${NC}"
+        fi
+        git pull && git push
+        echo "Git repository synced."
+    ;;
+
+    # Generate a .gitignore file for a specific language or framework
+    "dev:gitignore")
+        # Specify the language or framework for .gitignore template
+        local type="$firstParameter"
+        if [ -z "$type" ]; then
+            echo "Please specify a language or framework for .gitignore template."
+            echo "E.g.: mac dev:gitignore python"
+            exit 1
+        fi
+        echo "Generating .gitignore for $type..."
+        if command -v curl &> /dev/null; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}curl -s "https://www.toptal.com/developers/gitignore/api/$type" > .gitignore\n${NC}"
+            fi
+            curl -s "https://www.toptal.com/developers/gitignore/api/$type" > .gitignore
+            echo ".gitignore file generated for $type."
+        else
+            echo "${RED}curl is not installed. Please install curl first.${NC}"
+            exit 1
+        fi
+    ;;
+
+    # Format JSON content using Python's json.tool
+    "dev:format-json")
+        # Specify the JSON file to format or use piped input
+        local file="$firstParameter"
+        if [ -z "$file" ]; then
+            echo "Formatting JSON from piped input..."
+            if command -v python3 &> /dev/null; then
+                if [ "$echocommand" == "true" ]; then
+                    echo "${GREEN}python3 -m json.tool\n${NC}"
+                fi
+                python3 -m json.tool
+            else
+                echo "${RED}python3 is not installed. Please install python3 first.${NC}"
+                exit 1
+            fi
+        else
+            echo "Formatting JSON in file $file..."
+            if command -v python3 &> /dev/null; then
+                if [ "$echocommand" == "true" ]; then
+                    echo "${GREEN}python3 -m json.tool "$file" > "$file.formatted" && mv "$file.formatted" "$file"\n${NC}"
+                fi
+                python3 -m json.tool "$file" > "$file.formatted" && mv "$file.formatted" "$file"
+                echo "JSON formatted in $file."
+            else
+                echo "${RED}python3 is not installed. Please install python3 first.${NC}"
+                exit 1
+            fi
+        fi
+    ;;
+
+    # Clear Xcode derived data to free up space
+    "dev:xcode-clear")
+        echo "Clearing Xcode derived data..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}rm -rf ~/Library/Developer/Xcode/DerivedData/*\n${NC}"
+        fi
+        read -p "Confirm clearing Xcode derived data? (y/N) " confirm
+        if [[ "$confirm" =~ ^[yY]$ ]]; then
+            rm -rf ~/Library/Developer/Xcode/DerivedData/*
+            echo "Xcode derived data cleared."
+        else
+            echo "Operation cancelled."
+        fi
+    ;;
+
+    # Open the most recent Xcode project
+    "dev:xcode-recent")
+        echo "Opening the most recent Xcode project..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}open -a Xcode "$(ls -t ~/Library/Developer/Xcode/UserData/xcuserdata/*.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist | head -1 | sed 's|/xcdebugger/.*||')"\n${NC}"
+        fi
+        recent_project=$(ls -t ~/Library/Developer/Xcode/UserData/xcuserdata/*.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist | head -1 | sed 's|/xcdebugger/.*||')
+        if [ -n "$recent_project" ]; then
+            open -a Xcode "$recent_project"
+            echo "Opened recent Xcode project."
+        else
+            echo "No recent Xcode project found."
+        fi
+    ;;
+
+esac

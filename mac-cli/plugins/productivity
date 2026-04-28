@@ -1,0 +1,80 @@
+#!/bin/sh
+
+#--------------------------------------------------------------------
+# Productivity Utilities
+#--------------------------------------------------------------------
+
+# Productivity plugin for mac-cli
+# This plugin provides tools for managing tasks, notes, and time
+
+case "$fn" in
+
+    # Add or list tasks in a simple TODO list
+    "productivity:todo")
+        # Specify a new task to add, or list tasks if no argument is provided
+        local task="$firstParameter"
+        local todo_file="~/Documents/todo.txt"
+        if [ -z "$task" ]; then
+            echo "Listing TODO tasks..."
+            if [ -f "$todo_file" ]; then
+                cat "$todo_file" | nl
+            else
+                echo "No TODO list found at $todo_file"
+            fi
+        else
+            echo "Adding task: $task"
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}echo '$task' >> $todo_file\n${NC}"
+            fi
+            echo "$task" >> "$todo_file"
+            echo "Task added to TODO list."
+        fi
+    ;;
+
+    # Create or open a quick note
+    "productivity:note")
+        # Specify a note title or content to create a new note
+        local note_content="$firstParameter"
+        local notes_dir="~/Documents/Notes"
+        local note_file="$notes_dir/QuickNote_$(date +%Y%m%d-%H%M%S).txt"
+        if [ -z "$note_content" ]; then
+            echo "Opening notes directory or latest quick note..."
+            if [ -d "$notes_dir" ] && ls "$notes_dir"/*.txt >/dev/null 2>&1; then
+                latest_note=$(ls -t "$notes_dir"/*.txt | head -1)
+                if [ "$echocommand" == "true" ]; then
+                    echo "${GREEN}open '$latest_note'\n${NC}"
+                fi
+                open "$latest_note"
+            else
+                echo "No notes found in $notes_dir"
+            fi
+        else
+            mkdir -p "$notes_dir"
+            echo "Creating new note: $note_file"
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}echo '$note_content' > '$note_file'; open '$note_file'\n${NC}"
+            fi
+            echo "$note_content" > "$note_file"
+            open "$note_file"
+            echo "Note created and opened."
+        fi
+    ;;
+
+    # Set a timer for a specified duration
+    "productivity:timer")
+        # Specify the duration in minutes for the timer
+        local minutes="$firstParameter"
+        if [ -z "$minutes" ] || ! echo "$minutes" | grep -q '^[0-9]\+$'; then
+            echo "Please specify a valid number of minutes for the timer."
+            echo "E.g.: mac productivity:timer 25"
+            exit 1
+        fi
+        local seconds=$((minutes * 60))
+        echo "Starting timer for $minutes minutes..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}sleep $seconds && osascript -e 'display notification \"Timer for $minutes minutes is up!\" with title \"Timer Complete\"'\n${NC}"
+        fi
+        sleep "$seconds" && osascript -e "display notification \"Timer for $minutes minutes is up!\" with title \"Timer Complete\""
+    ;;
+
+esac

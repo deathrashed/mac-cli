@@ -82,11 +82,59 @@ case "$fn" in
     "git:branch")
 
         if [ "$echocommand" == "true" ]; then
-            echo "${GREEN}git branch -a\n\n${NC}"
+            echo "${GREEN}git branch\n\n${NC}"
         fi
-        git branch -a
+        git branch
     ;;
 
+    "git:branch-fuzzy")
+        if command -v fzf &> /dev/null; then
+            echo "Selecting branch with fuzzy search..."
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}git checkout \$(git branch --all | fzf | tr -d '[:space:]')\n${NC}"
+            fi
+            git checkout $(git branch --all | fzf | tr -d '[:space:]')
+        else
+            echo "${RED}fzf is not installed. Falling back to regular branch listing.${NC}"
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}git branch\n${NC}"
+            fi
+            git branch
+        fi
+    ;;
+
+    "git:add-fuzzy")
+        if command -v fzf &> /dev/null; then
+            echo "Adding files with fuzzy search..."
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}git add \$(git status -s | fzf -m | awk '{print \$2}')\n${NC}"
+            fi
+            git add $(git status -s | fzf -m | awk '{print $2}')
+        else
+            echo "${RED}fzf is not installed. Falling back to regular git add.${NC}"
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}git add .\n${NC}"
+            fi
+            git add .
+        fi
+    ;;
+
+    "git:unpushed")
+        echo "Listing unpushed commits..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}git log --branches --not --remotes\n${NC}"
+        fi
+        git log --branches --not --remotes
+    ;;
+
+    "git:copy-branch")
+        echo "Copying current branch name to clipboard..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}git rev-parse --abbrev-ref HEAD | pbcopy\n${NC}"
+        fi
+        git rev-parse --abbrev-ref HEAD | pbcopy
+        echo "Branch name copied to clipboard."
+    ;;
 
     # Rename Git branch
     "git:branch:rename")

@@ -1,0 +1,80 @@
+#!/bin/sh
+
+#--------------------------------------------------------------------
+# Text Utilities
+#--------------------------------------------------------------------
+
+# Text processing plugin for mac-cli
+# This plugin provides tools for manipulating and processing text data
+
+case "$fn" in
+
+    # Encode a URL to escape special characters
+    "text:urlencode")
+        # Specify the text or URL to encode
+        local input="${firstParameter:-}"
+        if [ -z "$input" ]; then
+            echo "Please specify text or URL to encode."
+            echo "E.g.: mac text:urlencode 'http://example.com/path?query=string'"
+            exit 1
+        fi
+        echo "URL encoding input..."
+        if command -v python3 &> /dev/null; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}python3 -c 'import urllib.parse; print(urllib.parse.quote("$input"))'\n${NC}"
+            fi
+            python3 -c "import urllib.parse; print(urllib.parse.quote('$input'))"
+        else
+            echo "${RED}python3 is not installed. Please install python3 first.${NC}"
+            exit 1
+        fi
+    ;;
+
+    # Decode a URL to unescape special characters
+    "text:urldecode")
+        # Specify the encoded text or URL to decode
+        local input="${firstParameter:-}"
+        if [ -z "$input" ]; then
+            echo "Please specify encoded text or URL to decode."
+            echo "E.g.: mac text:urldecode 'http%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dstring'"
+            exit 1
+        fi
+        echo "URL decoding input..."
+        if command -v python3 &> /dev/null; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}python3 -c 'import urllib.parse; print(urllib.parse.unquote("$input"))'\n${NC}"
+            fi
+            python3 -c "import urllib.parse; print(urllib.parse.unquote('$input'))"
+        else
+            echo "${RED}python3 is not installed. Please install python3 first.${NC}"
+            exit 1
+        fi
+    ;;
+
+    # Shorten a URL using a URL shortening service
+    "text:shortenurl")
+        # Specify the URL to shorten
+        local url="$firstParameter"
+        if [ -z "$url" ]; then
+            echo "Please specify a URL to shorten."
+            echo "E.g.: mac text:shortenurl 'https://example.com/long/path'"
+            exit 1
+        fi
+        echo "Shortening URL: $url..."
+        if command -v curl &> /dev/null; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}curl -s 'https://tinyurl.com/api-create.php?url=$url'\n${NC}"
+            fi
+            shortened=$(curl -s "https://tinyurl.com/api-create.php?url=$url")
+            if [ -n "$shortened" ] && echo "$shortened" | grep -q '^https://tinyurl.com/'; then
+                echo "Shortened URL: $shortened"
+            else
+                echo "${RED}Failed to shorten URL. Response: $shortened${NC}"
+            fi
+        else
+            echo "${RED}curl is not installed. Please install curl first.${NC}"
+            exit 1
+        fi
+    ;;
+
+esac

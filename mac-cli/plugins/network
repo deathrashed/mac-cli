@@ -4,51 +4,151 @@
 # Network Utilities
 #--------------------------------------------------------------------
 
+# Network operations plugin for mac-cli
+# This plugin provides tools for network diagnostics and information
+
 case "$fn" in
 
-    # Internet connection speed test
-    "speedtest")
-          echo "Testing internet connection speed..."
-          networkQuality -v
+    # Run a speed test using speedtest-cli
+    "network:speedtest")
+        echo "Running network speed test..."
+        if command -v speedtest-cli &> /dev/null; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}speedtest-cli\n${NC}"
+            fi
+            speedtest-cli
+        else
+            echo "${RED}speedtest-cli is not installed. Installing it now...${NC}"
+            if command -v pip &> /dev/null; then
+                pip install speedtest-cli
+                speedtest-cli
+            else
+                echo "${RED}pip is not installed. Please install pip or speedtest-cli manually.${NC}"
+                exit 1
+            fi
+        fi
     ;;
 
-
-    # List of used ports
-    "ports")
-
-        echo "Getting list of used ports..."
+    # List open ports using lsof
+    "network:ports")
+        echo "Listing open ports..."
         if [ "$echocommand" == "true" ]; then
-            echo "${GREEN}lsof -nP -iTCP -sTCP:LISTEN\n\n${NC}"
+            echo "${GREEN}lsof -nP -iTCP -sTCP:LISTEN\n${NC}"
         fi
         lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null || { echo "Some ports may require sudo access."; read -p "Use sudo for full list? (y/N) " confirm; if [[ "$confirm" =~ ^[yY]$ ]]; then sudo lsof -nP -iTCP -sTCP:LISTEN; else echo "Operation limited to non-sudo ports."; fi; }
     ;;
 
-
     # Get local IP address
-    "ip:local")
-
-        local_ip=$(ipconfig getifaddr en0)
-        if [ $? == 0 ]; then
-            if [ "$echocommand" == "true" ]; then
-                echo "${GREEN}ipconfig getifaddr en0\n\n${NC}"
-            fi
-        else
-            if [ "$echocommand" == "true" ]; then
-                echo "${GREEN}ipconfig getifaddr en1\n\n${NC}"
-            fi
-            local_ip=$(ipconfig getifaddr en1)
+    "network:ip:local")
+        echo "Getting local IP address..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}ipconfig getifaddr en0\n${NC}"
         fi
-        echo "Your IP address is:\n${local_ip}"
+        ipconfig getifaddr en0
     ;;
 
-
-    # Get public IP address
-    "ip:public")
-
-        if [ "$echocommand" == "true" ]; then
-            echo "${GREEN}wget http://ipinfo.io/ip -qO -\n\n${NC}"
+    # Get public IP address using curl
+    "network:public-ip")
+        echo "Getting public IP address..."
+        if command -v curl &> /dev/null; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}curl -s ifconfig.me\n${NC}"
+            fi
+            curl -s ifconfig.me
+        else
+            echo "${RED}curl is not installed. Please install curl first.${NC}"
+            exit 1
         fi
-        wget http://ipinfo.io/ip -qO -
+    ;;
+
+    # Get SSL certificate information for a domain
+    "network:cert")
+        # Specify the domain to check SSL certificate for
+        local domain="$firstParameter"
+        if [ -z "$domain" ]; then
+            echo "Please specify a domain to check SSL certificate."
+            echo "E.g.: mac network:cert example.com"
+            exit 1
+        fi
+        echo "Getting SSL certificate for $domain..."
+        if command -v openssl &> /dev/null; then
+            if [ "$echocommand" == "true" ]; then
+                echo "${GREEN}echo | openssl s_client -connect $domain:443 2>/dev/null | openssl x509 -noout -text\n${NC}"
+            fi
+            echo | openssl s_client -connect "$domain:443" 2>/dev/null | openssl x509 -noout -text
+        else
+            echo "${RED}openssl is not installed. Please install openssl first.${NC}"
+            exit 1
+        fi
+    ;;
+
+    # Ping a host to check network connectivity
+    "network:ping")
+        # Specify the host to ping
+        local host="$firstParameter"
+        if [ -z "$host" ]; then
+            echo "Please specify a host to ping."
+            echo "E.g.: mac network:ping google.com"
+            exit 1
+        fi
+        echo "Pinging $host..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}ping -c 4 $host\n${NC}"
+        fi
+        ping -c 4 "$host"
+    ;;
+
+    # Trace the route to a host
+    "network:traceroute")
+        # Specify the host to trace route to
+        local host="$firstParameter"
+        if [ -z "$host" ]; then
+            echo "Please specify a host to trace route to."
+            echo "E.g.: mac network:traceroute google.com"
+            exit 1
+        fi
+        echo "Tracing route to $host..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}traceroute $host\n${NC}"
+        fi
+        traceroute "$host"
+    ;;
+
+    # Get detailed network information
+    "network:info")
+        echo "Getting detailed network information..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}networksetup -listallnetworkservices\n${NC}"
+            echo "${GREEN}networksetup -getinfo Wi-Fi\n${NC}"
+        fi
+        echo "Network Services:"
+        networksetup -listallnetworkservices
+        echo "\nWi-Fi Info:"
+        networksetup -getinfo Wi-Fi
+    ;;
+
+    # Get Wi-Fi password for the current network
+    "network:wifi-password")
+        echo "Getting Wi-Fi password for the current network..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}security find-generic-password -ga '$(networksetup -getairportnetwork en0 | cut -d: -f2 | xargs)' 2>&1 | grep password | cut -d\" -f2\n${NC}"
+        fi
+        security find-generic-password -ga "$(networksetup -getairportnetwork en0 | cut -d: -f2 | xargs)" 2>&1 | grep password | cut -d\" -f2
+    ;;
+
+    # Flush DNS cache
+    "network:dns-flush")
+        echo "Flushing DNS cache..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}sudo killall -HUP mDNSResponder\n${NC}"
+        fi
+        read -p "Confirm flushing DNS cache? (y/N) " confirm
+        if [[ "$confirm" =~ ^[yY]$ ]]; then
+            sudo killall -HUP mDNSResponder
+            echo "DNS cache flushed."
+        else
+            echo "Operation cancelled."
+        fi
     ;;
 
 esac

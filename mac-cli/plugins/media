@@ -1,0 +1,122 @@
+#!/bin/sh
+
+#--------------------------------------------------------------------
+# Media Utilities
+#--------------------------------------------------------------------
+
+# Media operations plugin for mac-cli
+# This plugin provides tools for manipulating and managing media files
+
+case "$fn" in
+
+    # Clip a media file between specified start and end times
+    "media:clip")
+        # Specify the input file, start time, and end time for clipping
+        local file="$firstParameter"
+        local start_time="$secondParameter"
+        local end_time="${3:-}"
+        if [ -z "$file" ] || [ -z "$start_time" ] || [ -z "$end_time" ]; then
+            echo "Please specify file, start time, and end time."
+            echo "E.g.: mac media:clip file.mp3 00:10 00:30"
+            exit 1
+        fi
+        local output="clip_$(basename "$file")"
+        echo "Clipping $file from $start_time to $end_time..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}ffmpeg -i \"$file\" -ss $start_time -to $end_time -c copy \"$output\"\n${NC}"
+        fi
+        if command -v ffmpeg &> /dev/null; then
+            ffmpeg -i "$file" -ss "$start_time" -to "$end_time" -c copy "$output" 2>/dev/null
+            echo "Clip saved as $output"
+        else
+            echo "${RED}ffmpeg is not installed. Please install ffmpeg first.${NC}"
+            exit 1
+        fi
+    ;;
+
+    # Convert images to JPEG XL format for better compression
+    "media:to-jxl")
+        # Specify the file or directory containing images to convert
+        local file_or_dir="${firstParameter:-.}"
+        echo "Converting images to JPEG XL in $file_or_dir..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}find \"$file_or_dir\" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) -exec cjxl {} {}.jxl \;\n${NC}"
+        fi
+        if command -v cjxl &> /dev/null; then
+            find "$file_or_dir" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) -exec cjxl {} {}.jxl \;
+            echo "Conversion to JPEG XL completed"
+        else
+            echo "${RED}cjxl (libjxl) is not installed. Please install libjxl first.${NC}"
+            exit 1
+        fi
+    ;;
+
+    # Convert images to AVIF format for modern web usage
+    "media:to-avif")
+        # Specify the file or directory containing images to convert
+        local file_or_dir="${firstParameter:-.}"
+        echo "Converting images to AVIF in $file_or_dir..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}find \"$file_or_dir\" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) -exec ffmpeg -i {} -c:v libaom-av1 -b:v 0 -crf 30 {}.avif \;\n${NC}"
+        fi
+        if command -v ffmpeg &> /dev/null; then
+            find "$file_or_dir" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) -exec ffmpeg -i {} -c:v libaom-av1 -b:v 0 -crf 30 {}.avif \; 2>/dev/null
+            echo "Conversion to AVIF completed"
+        else
+            echo "${RED}ffmpeg is not installed. Please install ffmpeg first.${NC}"
+            exit 1
+        fi
+    ;;
+
+    # Convert SVG files to PNG format for raster usage
+    "media:svg-to-png")
+        # Specify the SVG file to convert to PNG
+        local file="$firstParameter"
+        if [ -z "$file" ]; then
+            echo "Please specify an SVG file to convert."
+            echo "E.g.: mac media:svg-to-png file.svg"
+            exit 1
+        fi
+        local output="${file%.svg}.png"
+        echo "Converting $file to PNG..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}rsvg-convert \"$file\" -o \"$output\"\n${NC}"
+        fi
+        if command -v rsvg-convert &> /dev/null; then
+            rsvg-convert "$file" -o "$output"
+            echo "Converted to $output"
+        else
+            echo "${RED}rsvg-convert (librsvg) is not installed. Please install librsvg first.${NC}"
+            exit 1
+        fi
+    ;;
+
+    # Upload an image to ImgBB hosting service
+    "media:upload-imgbb")
+        # Specify the image file to upload to ImgBB
+        local file="$firstParameter"
+        if [ -z "$file" ]; then
+            echo "Please specify an image file to upload."
+            echo "E.g.: mac media:upload-imgbb image.png"
+            exit 1
+        fi
+        echo "Uploading $file to ImgBB..."
+        if [ "$echocommand" == "true" ]; then
+            echo "${GREEN}curl -s -X POST 'https://api.imgbb.com/1/upload?key=YOUR_API_KEY' -F 'image=@$file'\n${NC}"
+        fi
+        if command -v curl &> /dev/null; then
+            # Note: Replace YOUR_API_KEY with actual key or store in env var
+            response=$(curl -s -X POST "https://api.imgbb.com/1/upload?key=YOUR_API_KEY" -F "image=@$file")
+            url=$(echo "$response" | grep -o '"url":"[^"]*"' | sed 's/"url":"\(.*\)"/\1/')
+            if [ -n "$url" ]; then
+                echo "Uploaded to: $url"
+            else
+                echo "${RED}Upload failed. Check API key or response: $response${NC}"
+            fi
+        else
+            echo "${RED}curl is not installed. Please install curl first.${NC}"
+            exit 1
+        fi
+    ;;
+
+esac
