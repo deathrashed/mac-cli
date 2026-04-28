@@ -3,11 +3,34 @@
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
+MAC_CLI_DIR="$HOME/.mac-cli"
+
 main() {
   echo "Uninstalling Mac CLI..."
-	rm /usr/local/bin/mac
-	rm -rf /usr/local/bin/mac-cli
-	echo "${GREEN}Mac CLI has been uninstalled\n${NC}"
+
+  # Remove symlink from PATH
+  sudo rm /usr/local/bin/mac 2>/dev/null || true
+
+  # Check if using symlinked setup
+  if [ -L "$MAC_CLI_DIR" ]; then
+    echo "Removing symlink at ~/.mac-cli"
+    rm "$MAC_CLI_DIR"
+    echo "${GREEN}Mac CLI symlink has been removed. Your repository at $(readlink -f "$MAC_CLI_DIR" 2>/dev/null || echo "the symlink target") still exists.\n${NC}"
+  elif [ -d "$MAC_CLI_DIR" ]; then
+    # Standard directory installation
+    echo "Removing ~/.mac-cli directory"
+    rm -rf "$MAC_CLI_DIR"
+    sudo rm -rf /usr/local/bin/mac-cli 2>/dev/null || true
+    echo "${GREEN}Mac CLI has been uninstalled\n${NC}"
+  else
+    echo "No mac-cli installation found."
+  fi
+
+  # Remove from shell configs
+  echo "Cleaning up shell configuration..."
+  if [ -f ~/.zshrc ]; then
+    sed -i '' '/# >>> mac-cli >>>/,/# <<< mac-cli <<</d' ~/.zshrc
+  fi
 }
 
 main
