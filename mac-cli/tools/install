@@ -94,6 +94,11 @@ main() {
 
     fi
 
+    # Install Zsh completion
+    echo "Setting up Mac-CLI Zsh completion\n"
+    mkdir -p /usr/local/bin/mac-cli/completion/zsh
+    cp "$PACKAGE_DIRECTORY/mac-cli/mac-cli/completion/zsh/_mac" /usr/local/bin/mac-cli/completion/zsh/_mac
+
     #
     # Check if fish shell is installed and prompt user to copy fish_completion
     #
@@ -114,6 +119,22 @@ main() {
 			    ;;
 	    esac
 	    printf "${NC}"
+    fi
+
+    # Add PATH and fpath setup for Zsh
+    if [ -f ~/.zshrc ]; then
+        echo "Adding PATH and fpath setup to ~/.zshrc"
+        # Remove existing mac-cli block if it exists
+        sed -i '' '/# >>> mac-cli >>>/,/# <<< mac-cli <<</d' ~/.zshrc
+        # Add idempotent block
+        cat >> ~/.zshrc << 'EOF'
+# >>> mac-cli >>>
+export PATH="/usr/local/bin/mac-cli:$PATH"
+fpath=("/usr/local/bin/mac-cli/completion/zsh" $fpath)
+autoload -Uz compinit
+compinit -i
+# <<< mac-cli <<<
+EOF
     fi
 }
 
