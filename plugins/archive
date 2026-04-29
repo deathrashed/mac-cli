@@ -12,8 +12,8 @@ case "$fn" in
     # Create a tar.gz archive of a file or directory
     "archive:tar")
         # Specify the target to archive and optional output filename
-        local target="${firstParameter:-.}"
-        local output="${secondParameter:-$(basename "$target").tar.gz}"
+        target="${firstParameter:-.}"
+        output="${secondParameter:-$(basename "$target").tar.gz}"
         echo "Creating tar archive of $target as $output..."
         if [ "$echocommand" == "true" ]; then
             echo "${GREEN}tar -czvf \"$output\" \"$target\"\n${NC}"
@@ -25,8 +25,8 @@ case "$fn" in
     # Create a zstd compressed tar archive for better compression
     "archive:zstd")
         # Specify the target to archive and optional output filename
-        local target="${firstParameter:-.}"
-        local output="${secondParameter:-$(basename "$target").tar.zst}"
+        target="${firstParameter:-.}"
+        output="${secondParameter:-$(basename "$target").tar.zst}"
         echo "Creating zstd compressed tar archive of $target as $output..."
         if [ "$echocommand" == "true" ]; then
             echo "${GREEN}tar -cvf - \"$target\" | zstd -o \"$output\"\n${NC}"
@@ -43,8 +43,8 @@ case "$fn" in
     # Create a fast gzip compressed tar archive with lower compression
     "archive:gz-fast")
         # Specify the target to archive and optional output filename
-        local target="${firstParameter:-.}"
-        local output="${secondParameter:-$(basename "$target").tar.gz}"
+        target="${firstParameter:-.}"
+        output="${secondParameter:-$(basename "$target").tar.gz}"
         echo "Creating fast gzip compressed tar archive of $target as $output..."
         if [ "$echocommand" == "true" ]; then
             echo "${GREEN}tar -cvf - \"$target\" | gzip -1 > \"$output\"\n${NC}"
@@ -56,7 +56,7 @@ case "$fn" in
     # Extract various archive formats
     "archive:extract")
         # Specify the archive file to extract
-        local file="$firstParameter"
+        file="$firstParameter"
         if [ -z "$file" ]; then
             echo "Please specify a file to extract."
             echo "E.g.: mac archive:extract file.tar.gz"

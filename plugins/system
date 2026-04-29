@@ -12,7 +12,7 @@ case "$fn" in
     # Kill processes matching a name or PID
     "system:kill")
         # Specify the pattern or PID to search for and terminate
-        local pattern="$firstParameter"
+        pattern="$firstParameter"
         if [ -z "$pattern" ]; then
             echo "Please specify a process name or PID to kill."
             echo "E.g.: mac system:kill firefox"

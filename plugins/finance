@@ -12,9 +12,9 @@ case "$fn" in
     # Calculate Compound Annual Growth Rate (CAGR)
     "finance:cagr")
         # Specify beginning value, ending value, and number of years
-        local beginning_value="$firstParameter"
-        local ending_value="$secondParameter"
-        local years="${3:-}"
+        beginning_value="$firstParameter"
+        ending_value="$secondParameter"
+        years="${3:-}"
         if [ -z "$beginning_value" ] || [ -z "$ending_value" ] || [ -z "$years" ]; then
             echo "Please specify beginning value, ending value, and number of years."
             echo "E.g.: mac finance:cagr 1000 2000 5"
@@ -36,9 +36,9 @@ case "$fn" in
     # Calculate simple interest
     "finance:simple-interest")
         # Specify principal amount, rate of interest, and time in years
-        local principal="$firstParameter"
-        local rate="$secondParameter"
-        local time="${3:-}"
+        principal="$firstParameter"
+        rate="$secondParameter"
+        time="${3:-}"
         if [ -z "$principal" ] || [ -z "$rate" ] || [ -z "$time" ]; then
             echo "Please specify principal amount, rate of interest, and time in years."
             echo "E.g.: mac finance:simple-interest 1000 5 2"

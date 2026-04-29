@@ -12,15 +12,15 @@ case "$fn" in
     # Clip a media file between specified start and end times
     "media:clip")
         # Specify the input file, start time, and end time for clipping
-        local file="$firstParameter"
-        local start_time="$secondParameter"
-        local end_time="${3:-}"
+        file="$firstParameter"
+        start_time="$secondParameter"
+        end_time="${3:-}"
         if [ -z "$file" ] || [ -z "$start_time" ] || [ -z "$end_time" ]; then
             echo "Please specify file, start time, and end time."
             echo "E.g.: mac media:clip file.mp3 00:10 00:30"
             exit 1
         fi
-        local output="clip_$(basename "$file")"
+        output="clip_$(basename "$file")"
         echo "Clipping $file from $start_time to $end_time..."
         if [ "$echocommand" == "true" ]; then
             echo "${GREEN}ffmpeg -i \"$file\" -ss $start_time -to $end_time -c copy \"$output\"\n${NC}"
@@ -37,7 +37,7 @@ case "$fn" in
     # Convert images to JPEG XL format for better compression
     "media:to-jxl")
         # Specify the file or directory containing images to convert
-        local file_or_dir="${firstParameter:-.}"
+        file_or_dir="${firstParameter:-.}"
         echo "Converting images to JPEG XL in $file_or_dir..."
         if [ "$echocommand" == "true" ]; then
             echo "${GREEN}find \"$file_or_dir\" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) -exec cjxl {} {}.jxl \;\n${NC}"
@@ -54,7 +54,7 @@ case "$fn" in
     # Convert images to AVIF format for modern web usage
     "media:to-avif")
         # Specify the file or directory containing images to convert
-        local file_or_dir="${firstParameter:-.}"
+        file_or_dir="${firstParameter:-.}"
         echo "Converting images to AVIF in $file_or_dir..."
         if [ "$echocommand" == "true" ]; then
             echo "${GREEN}find \"$file_or_dir\" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) -exec ffmpeg -i {} -c:v libaom-av1 -b:v 0 -crf 30 {}.avif \;\n${NC}"
@@ -71,13 +71,13 @@ case "$fn" in
     # Convert SVG files to PNG format for raster usage
     "media:svg-to-png")
         # Specify the SVG file to convert to PNG
-        local file="$firstParameter"
+        file="$firstParameter"
         if [ -z "$file" ]; then
             echo "Please specify an SVG file to convert."
             echo "E.g.: mac media:svg-to-png file.svg"
             exit 1
         fi
-        local output="${file%.svg}.png"
+        output="${file%.svg}.png"
         echo "Converting $file to PNG..."
         if [ "$echocommand" == "true" ]; then
             echo "${GREEN}rsvg-convert \"$file\" -o \"$output\"\n${NC}"
@@ -94,7 +94,7 @@ case "$fn" in
     # Upload an image to ImgBB hosting service
     "media:upload-imgbb")
         # Specify the image file to upload to ImgBB
-        local file="$firstParameter"
+        file="$firstParameter"
         if [ -z "$file" ]; then
             echo "Please specify an image file to upload."
             echo "E.g.: mac media:upload-imgbb image.png"

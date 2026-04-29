@@ -64,7 +64,7 @@ case "$fn" in
     # Get SSL certificate information for a domain
     "network:cert")
         # Specify the domain to check SSL certificate for
-        local domain="$firstParameter"
+        domain="$firstParameter"
         if [ -z "$domain" ]; then
             echo "Please specify a domain to check SSL certificate."
             echo "E.g.: mac network:cert example.com"
@@ -85,7 +85,7 @@ case "$fn" in
     # Ping a host to check network connectivity
     "network:ping")
         # Specify the host to ping
-        local host="$firstParameter"
+        host="$firstParameter"
         if [ -z "$host" ]; then
             echo "Please specify a host to ping."
             echo "E.g.: mac network:ping google.com"
@@ -101,7 +101,7 @@ case "$fn" in
     # Trace the route to a host
     "network:traceroute")
         # Specify the host to trace route to
-        local host="$firstParameter"
+        host="$firstParameter"
         if [ -z "$host" ]; then
             echo "Please specify a host to trace route to."
             echo "E.g.: mac network:traceroute google.com"

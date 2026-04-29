@@ -12,7 +12,7 @@ case "$fn" in
     # Download a video from a URL using yt-dlp or youtube-dl
     "web:download-video")
         # Specify the URL of the video to download
-        local url="$firstParameter"
+        url="$firstParameter"
         if [ -z "$url" ]; then
             echo "Please specify a URL to download video from."
             echo "E.g.: mac web:download-video https://youtube.com/watch?v=example"
@@ -38,7 +38,7 @@ case "$fn" in
     # Shorten a URL using tinyurl
     "web:shorten-url")
         # Specify the URL to shorten
-        local url="$firstParameter"
+        url="$firstParameter"
         if [ -z "$url" ]; then
             echo "Please specify a URL to shorten."
             echo "E.g.: mac web:shorten-url https://example.com/long/path"
@@ -64,7 +64,7 @@ case "$fn" in
     # Get current weather information
     "web:weather")
         # Specify the location for weather information (optional)
-        local location="$firstParameter"
+        location="$firstParameter"
         if [ -z "$location" ]; then
             echo "Getting weather for current location..."
             if command -v curl &> /dev/null; then

@@ -12,7 +12,7 @@ case "$fn" in
     # Encode a URL to escape special characters
     "text:urlencode")
         # Specify the text or URL to encode
-        local input="${firstParameter:-}"
+        input="${firstParameter:-}"
         if [ -z "$input" ]; then
             echo "Please specify text or URL to encode."
             echo "E.g.: mac text:urlencode 'http://example.com/path?query=string'"
@@ -33,7 +33,7 @@ case "$fn" in
     # Decode a URL to unescape special characters
     "text:urldecode")
         # Specify the encoded text or URL to decode
-        local input="${firstParameter:-}"
+        input="${firstParameter:-}"
         if [ -z "$input" ]; then
             echo "Please specify encoded text or URL to decode."
             echo "E.g.: mac text:urldecode 'http%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dstring'"
@@ -54,7 +54,7 @@ case "$fn" in
     # Shorten a URL using a URL shortening service
     "text:shortenurl")
         # Specify the URL to shorten
-        local url="$firstParameter"
+        url="$firstParameter"
         if [ -z "$url" ]; then
             echo "Please specify a URL to shorten."
             echo "E.g.: mac text:shortenurl 'https://example.com/long/path'"

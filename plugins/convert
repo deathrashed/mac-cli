@@ -12,7 +12,7 @@ case "$fn" in
     # Convert temperature from Celsius to Fahrenheit
     "convert:c-to-f")
         # Specify the temperature in Celsius to convert
-        local celsius="$firstParameter"
+        celsius="$firstParameter"
         if [ -z "$celsius" ]; then
             echo "Please specify a temperature in Celsius to convert to Fahrenheit."
             echo "E.g.: mac convert:c-to-f 25"
@@ -34,7 +34,7 @@ case "$fn" in
     # Convert temperature from Fahrenheit to Celsius
     "convert:f-to-c")
         # Specify the temperature in Fahrenheit to convert
-        local fahrenheit="$firstParameter"
+        fahrenheit="$firstParameter"
         if [ -z "$fahrenheit" ]; then
             echo "Please specify a temperature in Fahrenheit to convert to Celsius."
             echo "E.g.: mac convert:f-to-c 77"
@@ -56,7 +56,7 @@ case "$fn" in
     # Convert text to lowercase
     "convert:to-lowercase")
         # Specify the text to convert to lowercase or use piped input
-        local text="$firstParameter"
+        text="$firstParameter"
         if [ -z "$text" ]; then
             echo "Converting piped text to lowercase..."
             if [ "$echocommand" == "true" ]; then
@@ -75,7 +75,7 @@ case "$fn" in
     # Convert text to uppercase
     "convert:to-uppercase")
         # Specify the text to convert to uppercase or use piped input
-        local text="$firstParameter"
+        text="$firstParameter"
         if [ -z "$text" ]; then
             echo "Converting piped text to uppercase..."
             if [ "$echocommand" == "true" ]; then
@@ -94,7 +94,7 @@ case "$fn" in
     # Convert JSON to YAML (requires yq)
     "convert:json-to-yaml")
         # Specify the JSON file to convert or use piped input
-        local file="$firstParameter"
+        file="$firstParameter"
         if [ -z "$file" ]; then
             echo "Converting piped JSON to YAML..."
             if command -v yq &> /dev/null; then
@@ -124,7 +124,7 @@ case "$fn" in
     # Convert YAML to JSON (requires yq)
     "convert:yaml-to-json")
         # Specify the YAML file to convert or use piped input
-        local file="$firstParameter"
+        file="$firstParameter"
         if [ -z "$file" ]; then
             echo "Converting piped YAML to JSON..."
             if command -v yq &> /dev/null; then

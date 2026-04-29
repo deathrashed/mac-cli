@@ -12,7 +12,7 @@ case "$fn" in
     # Extract URLs from a file or piped input
     "regex:urls")
         # Specify the input file or pipe text to extract URLs from
-        local input="${firstParameter:-}"
+        input="${firstParameter:-}"
         if [ -z "$input" ]; then
             echo "Please specify a file or pipe text to extract URLs from."
             echo "E.g.: mac regex:urls file.txt or echo 'text' | mac regex:urls"
@@ -36,7 +36,7 @@ case "$fn" in
     # Extract email addresses from a file or piped input
     "regex:emails")
         # Specify the input file or pipe text to extract emails from
-        local input="${firstParameter:-}"
+        input="${firstParameter:-}"
         if [ -z "$input" ]; then
             echo "Please specify a file or pipe text to extract emails from."
             echo "E.g.: mac regex:emails file.txt or echo 'text' | mac regex:emails"
@@ -60,7 +60,7 @@ case "$fn" in
     # Extract IP addresses from a file or piped input
     "regex:ips")
         # Specify the input file or pipe text to extract IP addresses from
-        local input="${firstParameter:-}"
+        input="${firstParameter:-}"
         if [ -z "$input" ]; then
             echo "Please specify a file or pipe text to extract IP addresses from."
             echo "E.g.: mac regex:ips file.txt or echo 'text' | mac regex:ips"
@@ -84,9 +84,9 @@ case "$fn" in
     # Clean text using a regex pattern and replacement
     "regex:clean")
         # Specify the input file, pattern to match, and replacement text
-        local input="${firstParameter:-}"
-        local pattern="${secondParameter:-}"
-        local replacement="${3:-}"
+        input="${firstParameter:-}"
+        pattern="${secondParameter:-}"
+        replacement="${3:-}"
         if [ -z "$input" ] || [ -z "$pattern" ]; then
             echo "Please specify input file and pattern to clean."
             echo "E.g.: mac regex:clean file.txt 'pattern' 'replacement'"
@@ -103,7 +103,7 @@ case "$fn" in
     # Extract filenames from a file or piped input
     "regex:filename")
         # Specify the input file or pipe text to extract filenames from
-        local input="${firstParameter:-}"
+        input="${firstParameter:-}"
         if [ -z "$input" ]; then
             echo "Please specify a file or pipe text to extract filenames from."
             echo "E.g.: mac regex:filename file.txt or echo 'text' | mac regex:filename"

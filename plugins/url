@@ -12,14 +12,14 @@ case "$fn" in
     # Create a URL shortcut on the desktop
     "url:create")
         # Specify the URL and optional title for the shortcut
-        local url="$firstParameter"
-        local title="${secondParameter:-}"
+        url="$firstParameter"
+        title="${secondParameter:-}"
         if [ -z "$url" ]; then
             echo "Please specify a URL to create a shortcut for."
             echo "E.g.: mac url:create https://example.com 'Example'"
             exit 1
         fi
-        local shortcut_file="$(basename "$url" | tr -d '[:punct:]').webloc"
+        shortcut_file="$(basename "$url" | tr -d '[:punct:]').webloc"
         if [ -n "$title" ]; then
             shortcut_file="$(echo "$title" | tr -d '[:punct:]').webloc"
         fi
@@ -34,7 +34,7 @@ case "$fn" in
     # Create a URL shortcut on the desktop, overwriting if it exists
     "url:create-force")
         # Specify the URL and optional title for the shortcut, force overwrite if exists
-        local url="$firstParameter"
+        url="$firstParameter"
         if [ -z "$url" ]; then
             echo "Please specify a URL to create a shortcut for."
             echo "E.g.: mac url:create-force https://example.com"
@@ -42,8 +42,8 @@ case "$fn" in
         fi
         echo "Creating URL shortcut for $url on desktop (force overwrite)..."
         # Check if a shortcut already exists and delete it
-        local shortcut_name=$(basename "$url")
-        local shortcut_path="~/Desktop/$shortcut_name.webloc"
+        shortcut_name=$(basename "$url")
+        shortcut_path="~/Desktop/$shortcut_name.webloc"
         if [ -f "$shortcut_path" ]; then
             if [ "$echocommand" == "true" ]; then
                 echo "${GREEN}rm -f $shortcut_path\n${NC}"

@@ -16,7 +16,7 @@ case "$fn" in
     "dns:add")
         if [[ $2 =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Adding DNS server $2"
-            local service
+            service=""
             service=$(networksetup -listallnetworkservices | grep -i wifi | head -n1)
             if [ -z "$service" ]; then
                 service=$(networksetup -listallnetworkservices | grep -i ethernet | head -n1)
@@ -44,7 +44,7 @@ case "$fn" in
     "dns:remove")
         if [[ $2 =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Deleting DNS server ${2}..."
-            local service
+            service=""
             service=$(networksetup -listallnetworkservices | grep -i wifi | head -n1)
             if [ -z "$service" ]; then
                 service=$(networksetup -listallnetworkservices | grep -i ethernet | head -n1)
@@ -53,7 +53,7 @@ case "$fn" in
                 echo "${RED}Could not find Wi-Fi or Ethernet service${NC}"
                 exit 1
             fi
-            local current_dns
+            current_dns=""
             current_dns=$(networksetup -getdnsservers "$service" | grep -v "$2")
             if [ "$echocommand" == "true" ]; then
                 echo "${GREEN}networksetup -setdnsservers \"$service\" $current_dns\n\n${NC}"

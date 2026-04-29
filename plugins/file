@@ -12,8 +12,8 @@ case "$fn" in
     # Clean filenames by removing spaces and special characters
     "file:clean-names")
         # Specify the directory to clean filenames in, defaults to current directory
-        local dir="${firstParameter:-.}"
-        local dry_run=false
+        dir="${firstParameter:-.}"
+        dry_run=false
         if [[ "$secondParameter" == "--dry-run" ]]; then
             dry_run=true
         fi
@@ -31,13 +31,13 @@ case "$fn" in
     # Rename a single file to remove spaces and special characters
     "file:rename-clean")
         # Specify the file to rename
-        local file="$firstParameter"
+        file="$firstParameter"
         if [ -z "$file" ]; then
             echo "Please specify a file to rename."
             echo "E.g.: mac file:rename-clean file.txt"
             exit 1
         fi
-        local new_name=$(echo "$file" | tr ' ' '-' | tr -d '[:punct:]')
+        new_name=$(echo "$file" | tr ' ' '-' | tr -d '[:punct:]')
         if [ "$echocommand" == "true" ]; then
             echo "${GREEN}mv \"$file\" \"$new_name\"\n${NC}"
         fi
@@ -48,8 +48,8 @@ case "$fn" in
     # Backup a file or directory to a timestamped folder
     "file:backup")
         # Specify the target to backup, defaults to current directory
-        local target="${firstParameter:-.}"
-        local backup_dir="~/Backups/$(date +%Y%m%d-%H%M%S)"
+        target="${firstParameter:-.}"
+        backup_dir="~/Backups/$(date +%Y%m%d-%H%M%S)"
         echo "Backing up $target to $backup_dir..."
         if [ "$echocommand" == "true" ]; then
             echo "${GREEN}mkdir -p \"$backup_dir\"; cp -r \"$target\" \"$backup_dir\"\n${NC}"
@@ -62,8 +62,8 @@ case "$fn" in
     # Move a file and create a symbolic link to the new location
     "file:move-link")
         # Specify source and destination for moving and linking
-        local source="$firstParameter"
-        local dest="$secondParameter"
+        source="$firstParameter"
+        dest="$secondParameter"
         if [ -z "$source" ] || [ -z "$dest" ]; then
             echo "Please specify source and destination."
             echo "E.g.: mac file:move-link source dest"
@@ -81,7 +81,7 @@ case "$fn" in
     # Compress a file or directory to a tar.gz archive
     "file:compress")
         # Specify the file or directory to compress
-        local file="$firstParameter"
+        file="$firstParameter"
         if [ -z "$file" ]; then
             echo "Please specify a file or directory to compress."
             echo "E.g.: mac file:compress file.txt"
@@ -98,7 +98,7 @@ case "$fn" in
     # Extract a compressed file
     "file:extract")
         # Specify the compressed file to extract
-        local file="$firstParameter"
+        file="$firstParameter"
         if [ -z "$file" ]; then
             echo "Please specify a file to extract."
             echo "E.g.: mac file:extract file.tar.gz"
@@ -115,14 +115,14 @@ case "$fn" in
     # Convert a file to a data URL for embedding
     "file:dataurl")
         # Specify the file to convert to a data URL
-        local file="$firstParameter"
+        file="$firstParameter"
         if [ -z "$file" ]; then
             echo "Please specify a file to convert to data URL."
             echo "E.g.: mac file:dataurl image.png"
             exit 1
         fi
-        local mime_type=$(file -b --mime-type "$file")
-        local base64_data=$(base64 < "$file")
+        mime_type=$(file -b --mime-type "$file")
+        base64_data=$(base64 < "$file")
         echo "data:$mime_type;base64,$base64_data"
     ;;
 

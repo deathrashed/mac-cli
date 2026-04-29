@@ -34,13 +34,17 @@ MacCategories=(
 
 function printInfo()
 {
-    echo "\n${WHITEBOLD} mac CLI – OS X command line tools for developers"
-    echo "====================================================${NC}"
+    echo ""
+    echo "${LIGHTBLUE}╭────────────────────────────────────────────────────────╮${NC}"
+    echo "${LIGHTBLUE}│ ╭────────────────────────────────────────────────────╮ │${NC}"
+    echo "${LIGHTBLUE}│ │${YELLOW}                     MAC-CLI                       ${LIGHTBLUE}│ │${NC}"
+    echo "${LIGHTBLUE}│ ╰────────────────────────────────────────────────────╯ │${NC}"
+    echo "${LIGHTBLUE}╰────────────────────────────────────────────────────────╯${NC}"
 }
 
 function printAdditionalHelp()
 {
-    echo "\nRun ${LIGHTBLUE}mac help${NC} for full usage, ${LIGHTBLUE}mac categories${NC} for categories list, or ${LIGHTBLUE}mac {category}${NC} for usage related to {category}"
+    echo "\nRun ${PURPLE}mac help${NC} for full usage, ${PURPLE}mac categories${NC} for categories list, or ${PURPLE}mac {category}${NC} for usage related to {category}"
     echo "${NC}\n"
 }
 
@@ -54,276 +58,278 @@ function categoriesList()
 function usageList()
 {
     local category=$1
-    case $category in
+    local category_lower=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+    case $category_lower in
 
-        "General")
+        "general")
             usageList=(
-                "${WHITEBOLD}update${NC}                  Update macOS and installed packages."
-                "${WHITEBOLD}upgrade${NC}                 Upgrade Mac CLI to the latest version."
-                "${WHITEBOLD}uninstall${NC}               Uninstall Mac CLI."
-                "${WHITEBOLD}lock${NC}                    Lock screen immediately."
-                "${WHITEBOLD}restart${NC}                 Restart macOS."
-                "${WHITEBOLD}sleep${NC}                   Put macOS to sleep."
-                "${WHITEBOLD}shutdown${NC}                Shutdown macOS."
-                "${WHITEBOLD}uptime${NC}                  Show how long system has been running."
-                "${WHITEBOLD}volume${NC}                  Get or set system volume."
-                "${WHITEBOLD}volume:ismute${NC}           Check if volume is muted."
-                "${WHITEBOLD}volume:mute${NC}             Mute system volume."
-                "${WHITEBOLD}volume:unmute${NC}           Unmute system volume."
-                "${WHITEBOLD}hidden:show${NC}             Show hidden files in Finder."
-                "${WHITEBOLD}hidden:hide${NC}             Hide hidden files in Finder."
-                "${WHITEBOLD}bluetooth:status${NC}        Get the Bluetooth status."
-                "${WHITEBOLD}bluetooth:enable${NC}        Enable Bluetooth."
-                "${WHITEBOLD}bluetooth:disable${NC}       Disable Bluetooth."
-                "${WHITEBOLD}wifi:status${NC}             Get the WiFi status."
-                "${WHITEBOLD}wifi:scan${NC}               Scan available WiFi networks."
-                "${WHITEBOLD}wifi:enable${NC}             Enable WiFi."
-                "${WHITEBOLD}wifi:disable${NC}            Disable WiFi."
-                "${WHITEBOLD}folders:list${NC}            List folders in current directory with their size."
-                "${WHITEBOLD}folder:size${NC}             Calculate current folder size."
-                "${WHITEBOLD}trash:empty${NC}             Empty the Trash."
-                "${WHITEBOLD}trash:size${NC}              Calculate Trash size."
-                "${WHITEBOLD}battery${NC}                 Get battery status."
-                "${WHITEBOLD}info${NC}                    Get macOS version information."
-                "${WHITEBOLD}system${NC}                  Show system information."
-                "${WHITEBOLD}temp${NC}                    Show temperature stats."
-                "${WHITEBOLD}eject-all${NC}               Eject all mounted volumes and disks."
-                "${WHITEBOLD}dock:add-space${NC}          Add blank space to dock."
-                "${WHITEBOLD}screensaver${NC}             Start screensaver."
+                "${PURPLE}update${NC}                  Update macOS and installed packages."
+                "${PURPLE}upgrade${NC}                 Upgrade Mac CLI to the latest version."
+                "${PURPLE}uninstall${NC}               Uninstall Mac CLI."
+                "${PURPLE}lock${NC}                    Lock screen immediately."
+                "${PURPLE}restart${NC}                 Restart macOS."
+                "${PURPLE}sleep${NC}                   Put macOS to sleep."
+                "${PURPLE}shutdown${NC}                Shutdown macOS."
+                "${PURPLE}uptime${NC}                  Show how long system has been running."
+                "${PURPLE}volume${NC}                  Get or set system volume."
+                "${PURPLE}volume:ismute${NC}           Check if volume is muted."
+                "${PURPLE}volume:mute${NC}             Mute system volume."
+                "${PURPLE}volume:unmute${NC}           Unmute system volume."
+                "${PURPLE}hidden:show${NC}             Show hidden files in Finder."
+                "${PURPLE}hidden:hide${NC}             Hide hidden files in Finder."
+                "${PURPLE}bluetooth:status${NC}        Get the Bluetooth status."
+                "${PURPLE}bluetooth:enable${NC}        Enable Bluetooth."
+                "${PURPLE}bluetooth:disable${NC}       Disable Bluetooth."
+                "${PURPLE}wifi:status${NC}             Get the WiFi status."
+                "${PURPLE}wifi:scan${NC}               Scan available WiFi networks."
+                "${PURPLE}wifi:enable${NC}             Enable WiFi."
+                "${PURPLE}wifi:disable${NC}            Disable WiFi."
+                "${PURPLE}folders:list${NC}            List folders in current directory with their size."
+                "${PURPLE}folder:size${NC}             Calculate current folder size."
+                "${PURPLE}trash:empty${NC}             Empty the Trash."
+                "${PURPLE}trash:size${NC}              Calculate Trash size."
+                "${PURPLE}battery${NC}                 Get battery status."
+                "${PURPLE}info${NC}                    Get macOS version information."
+                "${PURPLE}system${NC}                  Show system information."
+                "${PURPLE}temp${NC}                    Show temperature stats."
+                "${PURPLE}eject-all${NC}               Eject all mounted volumes and disks."
+                "${PURPLE}dock:add-space${NC}          Add blank space to dock."
+                "${PURPLE}screensaver${NC}             Start screensaver."
             )
         ;;
 
-        "Search")
+        "search")
             usageList=(
-                "${WHITEBOLD}search:file${NC}             Search for files by name using fd or find."
-                "${WHITEBOLD}search:dir${NC}              Search for directories by name using fd or find."
-                "${WHITEBOLD}search:content${NC}          Search file contents for a pattern using rg or grep."
-                "${WHITEBOLD}search:recent${NC}           Search for recently modified files using mdfind or find."
-                "${WHITEBOLD}search:spotlight${NC}        Search using Spotlight for quick results."
-                "${WHITEBOLD}search:dash${NC}             Search for text in Dash documentation."
-                "${WHITEBOLD}search:devdocs${NC}          Search for text in DevDocs online documentation."
+                "${PURPLE}search:file${NC}             Search for files by name using fd or find."
+                "${PURPLE}search:dir${NC}              Search for directories by name using fd or find."
+                "${PURPLE}search:content${NC}          Search file contents for a pattern using rg or grep."
+                "${PURPLE}search:recent${NC}           Search for recently modified files using mdfind or find."
+                "${PURPLE}search:spotlight${NC}        Search using Spotlight for quick results."
+                "${PURPLE}search:dash${NC}             Search for text in Dash documentation."
+                "${PURPLE}search:devdocs${NC}          Search for text in DevDocs online documentation."
             )
         ;;
 
-        "Network")
+        "network")
             usageList=(
-                "${WHITEBOLD}network:speedtest${NC}       Run a network speed test using speedtest-cli."
-                "${WHITEBOLD}network:ports${NC}           List open ports using lsof."
-                "${WHITEBOLD}network:ip:local${NC}        Get local IP address."
-                "${WHITEBOLD}network:public-ip${NC}       Get public IP address using curl."
-                "${WHITEBOLD}network:cert${NC}            Get SSL certificate information for a domain."
-                "${WHITEBOLD}network:ping${NC}            Ping a host to check network connectivity."
-                "${WHITEBOLD}network:traceroute${NC}      Trace the route to a host."
-                "${WHITEBOLD}network:info${NC}            Get detailed network information."
-                "${WHITEBOLD}network:wifi-password${NC}   Get Wi-Fi password for the current network."
-                "${WHITEBOLD}network:dns-flush${NC}       Flush DNS cache."
+                "${PURPLE}network:speedtest${NC}       Run a network speed test using speedtest-cli."
+                "${PURPLE}network:ports${NC}           List open ports using lsof."
+                "${PURPLE}network:ip:local${NC}        Get local IP address."
+                "${PURPLE}network:public-ip${NC}       Get public IP address using curl."
+                "${PURPLE}network:cert${NC}            Get SSL certificate information for a domain."
+                "${PURPLE}network:ping${NC}            Ping a host to check network connectivity."
+                "${PURPLE}network:traceroute${NC}      Trace the route to a host."
+                "${PURPLE}network:info${NC}            Get detailed network information."
+                "${PURPLE}network:wifi-password${NC}   Get Wi-Fi password for the current network."
+                "${PURPLE}network:dns-flush${NC}       Flush DNS cache."
             )
         ;;
 
-        "DNS")
+        "dns")
             usageList=(
-                "${WHITEBOLD}dns:list${NC}                List current DNS servers."
-                "${WHITEBOLD}dns:add${NC}                 Add a DNS server."
-                "${WHITEBOLD}dns:remove${NC}              Remove a DNS server."
-                "${WHITEBOLD}dns:flush${NC}               Flush DNS cache."
-                "${WHITEBOLD}hosts:edit${NC}              Edit hosts file."
+                "${PURPLE}dns:list${NC}                List current DNS servers."
+                "${PURPLE}dns:add${NC}                 Add a DNS server."
+                "${PURPLE}dns:remove${NC}              Remove a DNS server."
+                "${PURPLE}dns:flush${NC}               Flush DNS cache."
+                "${PURPLE}hosts:edit${NC}              Edit hosts file."
             )
         ;;
 
-        "SSH")
+        "ssh")
             usageList=(
-                "${WHITEBOLD}ssh:download-file${NC}       Download a file through SSH."
-                "${WHITEBOLD}ssh:download-folder${NC}     Download a folder through SSH."
-                "${WHITEBOLD}ssh:sync:local${NC}          Sync a local folder from a remote server."
-                "${WHITEBOLD}ssh:sync:remote${NC}         Sync a remote folder from a local folder."
-                "${WHITEBOLD}ssh:upload${NC}              Upload a file through SSH."
-                "${WHITEBOLD}ssh:public-key${NC}          Get SSH public key."
-                "${WHITEBOLD}ssh:list${NC}                List SSH utilities."
+                "${PURPLE}ssh:download-file${NC}       Download a file through SSH."
+                "${PURPLE}ssh:download-folder${NC}     Download a folder through SSH."
+                "${PURPLE}ssh:sync:local${NC}          Sync a local folder from a remote server."
+                "${PURPLE}ssh:sync:remote${NC}         Sync a remote folder from a local folder."
+                "${PURPLE}ssh:upload${NC}              Upload a file through SSH."
+                "${PURPLE}ssh:public-key${NC}          Get SSH public key."
+                "${PURPLE}ssh:list${NC}                List SSH utilities."
             )
         ;;
 
-        "Webdev")
+        "webdev")
             usageList=(
-                "${WHITEBOLD}webdev${NC}                  Web development utilities."
+                "${PURPLE}webdev${NC}                  Web development utilities."
             )
         ;;
 
-        "Performance")
+        "performance")
             usageList=(
-                "${WHITEBOLD}performance${NC}             Performance and maintenance utilities."
-                "${WHITEBOLD}memory${NC}                  Show memory usage."
+                "${PURPLE}performance${NC}             Performance and maintenance utilities."
+                "${PURPLE}memory${NC}                  Show memory usage."
             )
         ;;
 
-        "Terminal")
+        "terminal")
             usageList=(
-                "${WHITEBOLD}terminal${NC}                Terminal utilities."
+                "${PURPLE}terminal${NC}                Terminal utilities."
             )
         ;;
 
-        "Git")
+        "git")
             usageList=(
-                "${WHITEBOLD}git:config${NC}              Show Git configuration."
-                "${WHITEBOLD}git:open${NC}                Open Git repository in browser."
-                "${WHITEBOLD}git:create:branch${NC}       Create new Git branch."
-                "${WHITEBOLD}git:branches:date${NC}       Show branch dates."
-                "${WHITEBOLD}git:undo-commit${NC}         Undo last commit."
-                "${WHITEBOLD}git:log${NC}                 Show commit log."
-                "${WHITEBOLD}git:branch${NC}              Show Git branches."
-                "${WHITEBOLD}git:branch:rename${NC}       Rename Git branch."
-                "${WHITEBOLD}git:branch:remove-local${NC}  Remove local Git branch."
-                "${WHITEBOLD}git:branch:remove-remote${NC} Remove remote Git branch."
-                "${WHITEBOLD}git:settings${NC}            Show Git settings."
-                "${WHITEBOLD}git:add-removed${NC}         Add removed files to staging."
-                "${WHITEBOLD}git:size${NC}                Get Git repository size."
-                "${WHITEBOLD}git:branch-fuzzy${NC}        Select branch with fuzzy search (requires fzf)."
-                "${WHITEBOLD}git:add-fuzzy${NC}           Add files with fuzzy search (requires fzf)."
-                "${WHITEBOLD}git:unpushed${NC}            List unpushed commits."
-                "${WHITEBOLD}git:copy-branch${NC}         Copy current branch name to clipboard."
+                "${PURPLE}git:config${NC}              Show Git configuration."
+                "${PURPLE}git:open${NC}                Open Git repository in browser."
+                "${PURPLE}git:create:branch${NC}       Create new Git branch."
+                "${PURPLE}git:branches:date${NC}       Show branch dates."
+                "${PURPLE}git:undo-commit${NC}         Undo last commit."
+                "${PURPLE}git:log${NC}                 Show commit log."
+                "${PURPLE}git:branch${NC}              Show Git branches."
+                "${PURPLE}git:branch:rename${NC}       Rename Git branch."
+                "${PURPLE}git:branch:remove-local${NC}  Remove local Git branch."
+                "${PURPLE}git:branch:remove-remote${NC} Remove remote Git branch."
+                "${PURPLE}git:settings${NC}            Show Git settings."
+                "${PURPLE}git:add-removed${NC}         Add removed files to staging."
+                "${PURPLE}git:size${NC}                Get Git repository size."
+                "${PURPLE}git:branch-fuzzy${NC}        Select branch with fuzzy search (requires fzf)."
+                "${PURPLE}git:add-fuzzy${NC}           Add files with fuzzy search (requires fzf)."
+                "${PURPLE}git:unpushed${NC}            List unpushed commits."
+                "${PURPLE}git:copy-branch${NC}         Copy current branch name to clipboard."
             )
         ;;
 
-        "Web_Utilities")
+        "web_utilities")
             usageList=(
-                "${WHITEBOLD}web_utilities${NC}           Web utilities."
+                "${PURPLE}web_utilities${NC}           Web utilities."
             )
         ;;
 
-        "Homebrew")
+        "homebrew")
             usageList=(
-                "${WHITEBOLD}brew:update${NC}             Update Homebrew and packages."
+                "${PURPLE}brew:update${NC}             Update Homebrew and packages."
             )
         ;;
 
-        "Image")
+        "image")
             usageList=(
-                "${WHITEBOLD}image${NC}                   Image utilities."
+                "${PURPLE}image${NC}                   Image utilities."
             )
         ;;
 
-        "Magento")
+        "magento")
             usageList=(
-                "${WHITEBOLD}magento${NC}                 Magento utilities."
+                "${PURPLE}magento${NC}                 Magento utilities."
             )
         ;;
 
-        "File")
+        "file")
             usageList=(
-                "${WHITEBOLD}file:clean-names${NC}        Clean filenames by removing spaces and special characters."
-                "${WHITEBOLD}file:rename-clean${NC}       Rename a single file to remove spaces and special characters."
-                "${WHITEBOLD}file:backup${NC}             Backup a file or directory to a timestamped folder."
-                "${WHITEBOLD}file:move-link${NC}          Move a file and create a symbolic link to the new location."
-                "${WHITEBOLD}file:compress${NC}           Compress a file or directory to a tar.gz archive."
-                "${WHITEBOLD}file:extract${NC}            Extract a compressed file."
-                "${WHITEBOLD}file:dataurl${NC}            Convert a file to a data URL."
+                "${PURPLE}file:clean-names${NC}        Clean filenames by removing spaces and special characters."
+                "${PURPLE}file:rename-clean${NC}       Rename a single file to remove spaces and special characters."
+                "${PURPLE}file:backup${NC}             Backup a file or directory to a timestamped folder."
+                "${PURPLE}file:move-link${NC}          Move a file and create a symbolic link to the new location."
+                "${PURPLE}file:compress${NC}           Compress a file or directory to a tar.gz archive."
+                "${PURPLE}file:extract${NC}            Extract a compressed file."
+                "${PURPLE}file:dataurl${NC}            Convert a file to a data URL."
             )
         ;;
 
-        "Archive")
+        "archive")
             usageList=(
-                "${WHITEBOLD}archive:tar${NC}             Create a tar.gz archive of a file or directory."
-                "${WHITEBOLD}archive:zstd${NC}            Create a zstd compressed tar archive (requires zstd)."
-                "${WHITEBOLD}archive:gz-fast${NC}         Create a fast gzip compressed tar archive."
-                "${WHITEBOLD}archive:extract${NC}         Extract various archive formats (tar.gz, zstd, zip)."
+                "${PURPLE}archive:tar${NC}             Create a tar.gz archive of a file or directory."
+                "${PURPLE}archive:zstd${NC}            Create a zstd compressed tar archive (requires zstd)."
+                "${PURPLE}archive:gz-fast${NC}         Create a fast gzip compressed tar archive."
+                "${PURPLE}archive:extract${NC}         Extract various archive formats (tar.gz, zstd, zip)."
             )
         ;;
 
-        "Media")
+        "media")
             usageList=(
-                "${WHITEBOLD}media:clip${NC}              Clip a media file between start and end times (requires ffmpeg)."
-                "${WHITEBOLD}media:to-jxl${NC}            Convert images to JPEG XL format (requires libjxl)."
-                "${WHITEBOLD}media:to-avif${NC}           Convert images to AVIF format (requires ffmpeg)."
-                "${WHITEBOLD}media:svg-to-png${NC}        Convert SVG to PNG (requires librsvg)."
-                "${WHITEBOLD}media:upload-imgbb${NC}      Upload an image to ImgBB (requires API key setup)."
+                "${PURPLE}media:clip${NC}              Clip a media file between start and end times (requires ffmpeg)."
+                "${PURPLE}media:to-jxl${NC}            Convert images to JPEG XL format (requires libjxl)."
+                "${PURPLE}media:to-avif${NC}           Convert images to AVIF format (requires ffmpeg)."
+                "${PURPLE}media:svg-to-png${NC}        Convert SVG to PNG (requires librsvg)."
+                "${PURPLE}media:upload-imgbb${NC}      Upload an image to ImgBB (requires API key setup)."
             )
         ;;
 
-        "System")
+        "system")
             usageList=(
-                "${WHITEBOLD}system:kill${NC}             Kill processes matching a pattern or PID."
-                "${WHITEBOLD}system:ports${NC}            List open ports."
-                "${WHITEBOLD}system:processes${NC}        List top processes by memory usage."
-                "${WHITEBOLD}system:cleanup-dsstore${NC}  Delete all .DS_Store files in directory and subdirectories."
-                "${WHITEBOLD}system:unmount-all${NC}      Unmount all external volumes."
-                "${WHITEBOLD}system:clean${NC}            Clean system by removing temporary files and caches."
-                "${WHITEBOLD}system:usage${NC}            Display detailed system usage statistics."
+                "${PURPLE}system:kill${NC}             Kill processes matching a pattern or PID."
+                "${PURPLE}system:ports${NC}            List open ports."
+                "${PURPLE}system:processes${NC}        List top processes by memory usage."
+                "${PURPLE}system:cleanup-dsstore${NC}  Delete all .DS_Store files in directory and subdirectories."
+                "${PURPLE}system:unmount-all${NC}      Unmount all external volumes."
+                "${PURPLE}system:clean${NC}            Clean system by removing temporary files and caches."
+                "${PURPLE}system:usage${NC}            Display detailed system usage statistics."
             )
         ;;
 
-        "URL")
+        "url")
             usageList=(
-                "${WHITEBOLD}url:create${NC}              Create a URL shortcut on the desktop."
-                "${WHITEBOLD}url:create-force${NC}        Create a URL shortcut, overwriting if it exists."
+                "${PURPLE}url:create${NC}              Create a URL shortcut on the desktop."
+                "${PURPLE}url:create-force${NC}        Create a URL shortcut, overwriting if it exists."
             )
         ;;
 
-        "Regex")
+        "regex")
             usageList=(
-                "${WHITEBOLD}regex:urls${NC}              Extract URLs from a file or piped input."
-                "${WHITEBOLD}regex:emails${NC}            Extract email addresses from a file or piped input."
-                "${WHITEBOLD}regex:ips${NC}               Extract IP addresses from a file or piped input."
-                "${WHITEBOLD}regex:clean${NC}             Clean text using a regex pattern and replacement."
-                "${WHITEBOLD}regex:filename${NC}          Extract filenames from a file or piped input."
+                "${PURPLE}regex:urls${NC}              Extract URLs from a file or piped input."
+                "${PURPLE}regex:emails${NC}            Extract email addresses from a file or piped input."
+                "${PURPLE}regex:ips${NC}               Extract IP addresses from a file or piped input."
+                "${PURPLE}regex:clean${NC}             Clean text using a regex pattern and replacement."
+                "${PURPLE}regex:filename${NC}          Extract filenames from a file or piped input."
             )
         ;;
 
-        "Text")
+        "text")
             usageList=(
-                "${WHITEBOLD}text:urlencode${NC}          Encode a URL to escape special characters."
-                "${WHITEBOLD}text:urldecode${NC}          Decode a URL to unescape special characters."
-                "${WHITEBOLD}text:shortenurl${NC}         Shorten a URL using a URL shortening service."
+                "${PURPLE}text:urlencode${NC}          Encode a URL to escape special characters."
+                "${PURPLE}text:urldecode${NC}          Decode a URL to unescape special characters."
+                "${PURPLE}text:shortenurl${NC}         Shorten a URL using a URL shortening service."
             )
         ;;
 
-        "Productivity")
+        "productivity")
             usageList=(
-                "${WHITEBOLD}productivity:todo${NC}        Add or list tasks in a simple TODO list."
-                "${WHITEBOLD}productivity:note${NC}        Create or open a quick note."
-                "${WHITEBOLD}productivity:timer${NC}       Set a timer for a specified duration."
+                "${PURPLE}productivity:todo${NC}        Add or list tasks in a simple TODO list."
+                "${PURPLE}productivity:note${NC}        Create or open a quick note."
+                "${PURPLE}productivity:timer${NC}       Set a timer for a specified duration."
             )
         ;;
 
-        "Dev")
+        "dev")
             usageList=(
-                "${WHITEBOLD}dev:git-clear${NC}           Clear Git changes, resetting to the last commit."
-                "${WHITEBOLD}dev:git-save${NC}            Save Git changes as a stash."
-                "${WHITEBOLD}dev:git-standup${NC}         View Git standup report for recent activity."
-                "${WHITEBOLD}dev:git-switch${NC}          Switch Git branch interactively if fzf is available."
-                "${WHITEBOLD}dev:git-sync${NC}            Sync Git changes with remote repository."
-                "${WHITEBOLD}dev:gitignore${NC}           Generate a .gitignore file for a specific language or framework."
-                "${WHITEBOLD}dev:format-json${NC}         Format JSON content using Python's json.tool."
-                "${WHITEBOLD}dev:xcode-clear${NC}         Clear Xcode derived data to free up space."
-                "${WHITEBOLD}dev:xcode-recent${NC}        Open the most recent Xcode project."
+                "${PURPLE}dev:git-clear${NC}           Clear Git changes, resetting to the last commit."
+                "${PURPLE}dev:git-save${NC}            Save Git changes as a stash."
+                "${PURPLE}dev:git-standup${NC}         View Git standup report for recent activity."
+                "${PURPLE}dev:git-switch${NC}          Switch Git branch interactively if fzf is available."
+                "${PURPLE}dev:git-sync${NC}            Sync Git changes with remote repository."
+                "${PURPLE}dev:gitignore${NC}           Generate a .gitignore file for a specific language or framework."
+                "${PURPLE}dev:format-json${NC}         Format JSON content using Python's json.tool."
+                "${PURPLE}dev:xcode-clear${NC}         Clear Xcode derived data to free up space."
+                "${PURPLE}dev:xcode-recent${NC}        Open the most recent Xcode project."
             )
         ;;
 
-        "Web")
+        "web")
             usageList=(
-                "${WHITEBOLD}web:download-video${NC}      Download a video from a URL using yt-dlp or youtube-dl."
-                "${WHITEBOLD}web:shorten-url${NC}         Shorten a URL using tinyurl."
-                "${WHITEBOLD}web:weather${NC}             Get current weather information."
+                "${PURPLE}web:download-video${NC}      Download a video from a URL using yt-dlp or youtube-dl."
+                "${PURPLE}web:shorten-url${NC}         Shorten a URL using tinyurl."
+                "${PURPLE}web:weather${NC}             Get current weather information."
             )
         ;;
 
-        "Convert")
+        "convert")
             usageList=(
-                "${WHITEBOLD}convert:c-to-f${NC}          Convert temperature from Celsius to Fahrenheit."
-                "${WHITEBOLD}convert:f-to-c${NC}          Convert temperature from Fahrenheit to Celsius."
-                "${WHITEBOLD}convert:to-lowercase${NC}    Convert text to lowercase."
-                "${WHITEBOLD}convert:to-uppercase${NC}    Convert text to uppercase."
-                "${WHITEBOLD}convert:json-to-yaml${NC}    Convert JSON to YAML (requires yq)."
-                "${WHITEBOLD}convert:yaml-to-json${NC}    Convert YAML to JSON (requires yq)."
+                "${PURPLE}convert:c-to-f${NC}          Convert temperature from Celsius to Fahrenheit."
+                "${PURPLE}convert:f-to-c${NC}          Convert temperature from Fahrenheit to Celsius."
+                "${PURPLE}convert:to-lowercase${NC}    Convert text to lowercase."
+                "${PURPLE}convert:to-uppercase${NC}    Convert text to uppercase."
+                "${PURPLE}convert:json-to-yaml${NC}    Convert JSON to YAML (requires yq)."
+                "${PURPLE}convert:yaml-to-json${NC}    Convert YAML to JSON (requires yq)."
             )
         ;;
 
-        "Finance")
+        "finance")
             usageList=(
-                "${WHITEBOLD}finance:cagr${NC}            Calculate Compound Annual Growth Rate (CAGR)."
-                "${WHITEBOLD}finance:simple-interest${NC} Calculate simple interest."
+                "${PURPLE}finance:cagr${NC}            Calculate Compound Annual Growth Rate (CAGR)."
+                "${PURPLE}finance:simple-interest${NC} Calculate simple interest."
             )
         ;;
     esac
-    echo "${LIGHTGREEN}$category Commands:${NC}"
+    echo "${NC}$category Commands:${NC}"
+    echo "${LIGHTBLUE}─────────────────────────────────────────────────────────${NC}"
     for usage in "${usageList[@]}"; do
         echo "    $usage"
     done
@@ -338,24 +344,30 @@ case ${fn} in
             echo "$(usageList ${c})"
         done
         echo "$(printAdditionalHelp)"
+        exit 0
         ;;
     "categories")
         echo "$(printInfo)"
-        echo "\n${WHITEBOLD}mac CLI Categories: ${NC}\n"
+        echo "\n${PURPLE}mac CLI Categories: ${NC}\n"
         for c in "${MacCategories[@]}"
         do
-            echo "${WHITEBOLD} >\t$c ${NC}"
+            echo "${PURPLE} >\t$c ${NC}"
         done
         echo "$(printAdditionalHelp)"
+        exit 0
         ;;
 esac
 
+# Check for category match (case-insensitive)
 for c in "${MacCategories[@]}"
 do
-    if [ "${c}" = "${fn}" ]; then
+    # Convert both to lowercase for comparison
+    c_lower=$(echo "${c}" | tr '[:upper:]' '[:lower:]')
+    fn_lower=$(echo "${fn}" | tr '[:upper:]' '[:lower:]')
+    if [ "${c_lower}" = "${fn_lower}" ]; then
         echo "$(printInfo)"
-        echo "\n${WHITEBOLD}Usage for 'mac ${c}'"
+        echo "\n${PURPLE}Usage for 'mac ${c}'"
         echo "$(usageList ${c})"
-        break
+        exit 0
     fi
 done

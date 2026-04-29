@@ -12,7 +12,7 @@ case "$fn" in
     # Search for files by name using fd or find
     "search:file")
         # Specify the pattern to search for files
-        local pattern="$firstParameter"
+        pattern="$firstParameter"
         if [ -z "$pattern" ]; then
             echo "Please specify a pattern to search for."
             echo "E.g.: mac search:file *.txt"
@@ -35,7 +35,7 @@ case "$fn" in
     # Search for directories by name using fd or find
     "search:dir")
         # Specify the pattern to search for directories
-        local pattern="$firstParameter"
+        pattern="$firstParameter"
         if [ -z "$pattern" ]; then
             echo "Please specify a pattern to search for."
             echo "E.g.: mac search:dir logs"
@@ -58,7 +58,7 @@ case "$fn" in
     # Search file contents for a pattern using rg or grep
     "search:content")
         # Specify the pattern to search within file contents
-        local pattern="$firstParameter"
+        pattern="$firstParameter"
         if [ -z "$pattern" ]; then
             echo "Please specify a pattern to search for in file contents."
             echo "E.g.: mac search:content error"
@@ -81,7 +81,7 @@ case "$fn" in
     # Search for recently modified files using mdfind or find
     "search:recent")
         # Specify the time frame or use default (last 24 hours)
-        local timeframe="${firstParameter:-1d}"
+        timeframe="${firstParameter:-1d}"
         echo "Searching for files modified in the last $timeframe..."
         if command -v mdfind &> /dev/null; then
             if [ "$echocommand" == "true" ]; then
@@ -99,7 +99,7 @@ case "$fn" in
     # Search using Spotlight for quick results
     "search:spotlight")
         # Specify the query to search with Spotlight
-        local query="$firstParameter"
+        query="$firstParameter"
         if [ -z "$query" ]; then
             echo "Please specify a query to search with Spotlight."
             echo "E.g.: mac search:spotlight document"
@@ -115,7 +115,7 @@ case "$fn" in
     # Search for text in Dash documentation
     "search:dash")
         # Specify the query to search in Dash
-        local query="$firstParameter"
+        query="$firstParameter"
         if [ -z "$query" ]; then
             echo "Please specify a query to search in Dash."
             echo "E.g.: mac search:dash python list"
@@ -131,7 +131,7 @@ case "$fn" in
     # Search for text in DevDocs online documentation
     "search:devdocs")
         # Specify the query to search in DevDocs
-        local query="$firstParameter"
+        query="$firstParameter"
         if [ -z "$query" ]; then
             echo "Please specify a query to search in DevDocs."
             echo "E.g.: mac search:devdocs javascript array"
@@ -160,8 +160,8 @@ case "$fn" in
     ;;
 
     "search:content")
-        local pattern="$firstParameter"
-        local dir="${secondParameter:-.}"
+        pattern="$firstParameter"
+        dir="${secondParameter:-.}"
         if [ -z "$pattern" ]; then
             echo "Please specify a pattern to search for in content."
             echo "E.g.: mac search:content 'blast beat' ~/Notes"
@@ -182,7 +182,7 @@ case "$fn" in
     ;;
 
     "search:recent")
-        local minutes="$firstParameter"
+        minutes="$firstParameter"
         if [ -z "$minutes" ]; then
             echo "Please specify the number of minutes to search back for recently modified files."
             echo "E.g.: mac search:recent 60"

@@ -36,6 +36,8 @@ export LIGHTBLUE='\033[1;34m'
 export LIGHTGREEN='\033[1;32m'
 export WHITEBOLD='\033[1;37m'
 export RED='\033[1;31m'
+export YELLOW='\033[1;33m'
+export PURPLE='\033[1;35m'
 export NC='\033[0m' # No Color
 
 #--------------------------------------------------------------------
@@ -228,14 +230,34 @@ source "${MAC_CLI_BASE_DIR}/misc/help"
 #--------------------------------------------------------------------
 
 if [[ ! " ${COMMANDS[@]} " =~ " ${fn} " ]]; then
-    echo "${RED}Command not found: '${fn}' $(test ! -z "$allParameters" -a "$allParameters" != " " && echo "\nParameters: $allParameters" || echo "")${NC}"
-    read -p "Choose a category for which to list help/usage... ($(categoriesList)) " category # Ask user for a category to print usage
+    echo "${RED}Command not found: '${fn}'${NC}"
+    if [ -n "$allParameters" ] && [ "$allParameters" != " " ]; then
+        echo "${YELLOW}Parameters: $allParameters${NC}"
+    fi
 
-    if [ ! -z "${category}" ]; then
-        echo "$(usageList ${category})\n" # Show help/usage for user-selected category
+    if command -v fzf &>/dev/null; then
+        category=$(printf "%s\n" "${MacCategories[@]}" | fzf \
+            --prompt="Category > " \
+            --height=~50% \
+            --layout=reverse \
+            --border=rounded \
+            --info=hidden \
+            --header="Select a category to see its commands" \
+            --color="header:italic:blue,prompt:blue,pointer:green,hl:green,hl+:green")
+    else
+        echo "${LIGHTBLUE}Available categories:${NC}"
+        printf "${GREEN}"
+        printf "    %s\n" "${MacCategories[@]}" | column
+        printf "${NC}\n"
+        printf "${LIGHTBLUE}Choose a category: ${NC}"
+        read -r category
+    fi
+
+    if [ -n "${category}" ]; then
+        echo "$(usageList ${category})\n"
         echo "$(printAdditionalHelp)"
     else
-        kill -INT $$ # Exit
+        kill -INT $$
     fi
 fi
 

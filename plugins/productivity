@@ -12,8 +12,8 @@ case "$fn" in
     # Add or list tasks in a simple TODO list
     "productivity:todo")
         # Specify a new task to add, or list tasks if no argument is provided
-        local task="$firstParameter"
-        local todo_file="~/Documents/todo.txt"
+        task="$firstParameter"
+        todo_file="~/Documents/todo.txt"
         if [ -z "$task" ]; then
             echo "Listing TODO tasks..."
             if [ -f "$todo_file" ]; then
@@ -34,9 +34,9 @@ case "$fn" in
     # Create or open a quick note
     "productivity:note")
         # Specify a note title or content to create a new note
-        local note_content="$firstParameter"
-        local notes_dir="~/Documents/Notes"
-        local note_file="$notes_dir/QuickNote_$(date +%Y%m%d-%H%M%S).txt"
+        note_content="$firstParameter"
+        notes_dir="~/Documents/Notes"
+        note_file="$notes_dir/QuickNote_$(date +%Y%m%d-%H%M%S).txt"
         if [ -z "$note_content" ]; then
             echo "Opening notes directory or latest quick note..."
             if [ -d "$notes_dir" ] && ls "$notes_dir"/*.txt >/dev/null 2>&1; then
@@ -63,13 +63,13 @@ case "$fn" in
     # Set a timer for a specified duration
     "productivity:timer")
         # Specify the duration in minutes for the timer
-        local minutes="$firstParameter"
+        minutes="$firstParameter"
         if [ -z "$minutes" ] || ! echo "$minutes" | grep -q '^[0-9]\+$'; then
             echo "Please specify a valid number of minutes for the timer."
             echo "E.g.: mac productivity:timer 25"
             exit 1
         fi
-        local seconds=$((minutes * 60))
+        seconds=$((minutes * 60))
         echo "Starting timer for $minutes minutes..."
         if [ "$echocommand" == "true" ]; then
             echo "${GREEN}sleep $seconds && osascript -e 'display notification \"Timer for $minutes minutes is up!\" with title \"Timer Complete\"'\n${NC}"

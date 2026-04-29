@@ -86,7 +86,7 @@ case "$fn" in
     # Generate a .gitignore file for a specific language or framework
     "dev:gitignore")
         # Specify the language or framework for .gitignore template
-        local type="$firstParameter"
+        type="$firstParameter"
         if [ -z "$type" ]; then
             echo "Please specify a language or framework for .gitignore template."
             echo "E.g.: mac dev:gitignore python"
@@ -108,7 +108,7 @@ case "$fn" in
     # Format JSON content using Python's json.tool
     "dev:format-json")
         # Specify the JSON file to format or use piped input
-        local file="$firstParameter"
+        file="$firstParameter"
         if [ -z "$file" ]; then
             echo "Formatting JSON from piped input..."
             if command -v python3 &> /dev/null; then
