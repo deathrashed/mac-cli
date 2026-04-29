@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 ###########################################################################
 #  mac CLI (mac command line tools) - macOS command line tools for developers
 ###########################################################################
@@ -11,13 +11,46 @@
 #
 ###########################################################################
 
-# Define the base directory for mac-cli
-MAC_CLI_BASE_DIR="${HOME}/.mac-cli"
+# Define the base directory for mac-cli. Prefer the script location so symlinked
+# installs and local checkouts run the same code, while still allowing tests and
+# the Go compatibility runner to override it.
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+    SOURCE_DIR="$(cd -P -- "$(dirname -- "$SOURCE")" && pwd)"
+    TARGET="$(readlink "$SOURCE")"
+    case "$TARGET" in
+        /*) SOURCE="$TARGET" ;;
+        *) SOURCE="${SOURCE_DIR}/${TARGET}" ;;
+    esac
+done
+SCRIPT_DIR="$(cd -P -- "$(dirname -- "$SOURCE")" && pwd)"
+MAC_CLI_BASE_DIR="${MAC_CLI_BASE_DIR:-${SCRIPT_DIR}}"
+
+run_tui() {
+    if [ -x "${MAC_CLI_BASE_DIR}/bin/mac-tui" ]; then
+        exec "${MAC_CLI_BASE_DIR}/bin/mac-tui" --tui
+    fi
+
+    if command -v go >/dev/null 2>&1 && [ -f "${MAC_CLI_BASE_DIR}/go.mod" ]; then
+        cd "${MAC_CLI_BASE_DIR}" || exit 1
+        exec go run ./cmd/mac --tui
+    fi
+
+    echo "Mac CLI TUI is not built and Go is not available."
+    echo "Build it with: cd ${MAC_CLI_BASE_DIR} && go build -o bin/mac-tui ./cmd/mac"
+    exit 1
+}
+
+case "${1:-}" in
+    ""|"--tui"|"tui")
+        run_tui
+    ;;
+esac
 
 #--------------------------------------------------------------------
 # Configuration
 #--------------------------------------------------------------------
-export echocommand="true"
+export echocommand="${echocommand:-true}"
 
 #--------------------------------------------------------------------
 # Parameters
@@ -30,15 +63,15 @@ export allParameters=${@:2}
 #--------------------------------------------------------------------
 # Colors
 #--------------------------------------------------------------------
-export GREEN='\033[0;32m'
-export GRAY='\033[0;37m'
-export LIGHTBLUE='\033[1;34m'
-export LIGHTGREEN='\033[1;32m'
-export WHITEBOLD='\033[1;37m'
-export RED='\033[1;31m'
-export YELLOW='\033[1;33m'
-export PURPLE='\033[1;35m'
-export NC='\033[0m' # No Color
+export GREEN=$'\033[0;32m'
+export GRAY=$'\033[0;37m'
+export LIGHTBLUE=$'\033[1;34m'
+export LIGHTGREEN=$'\033[1;32m'
+export WHITEBOLD=$'\033[1;37m'
+export RED=$'\033[1;31m'
+export YELLOW=$'\033[1;33m'
+export PURPLE=$'\033[1;35m'
+export NC=$'\033[0m' # No Color
 
 #--------------------------------------------------------------------
 # List of Commands
@@ -105,6 +138,9 @@ COMMANDS=(
     ports
     ip:local
     ip:public
+    network:speedtest
+    network:ports
+    network:ip:local
     dns:list
     dns:add
     dns:remove
@@ -260,6 +296,15 @@ if [[ ! " ${COMMANDS[@]} " =~ " ${fn} " ]]; then
         kill -INT $$
     fi
 fi
+
+case "$fn" in
+    "ports") fn="network:ports" ;;
+    "speedtest") fn="network:speedtest" ;;
+    "ip:local") fn="network:ip:local" ;;
+    "ip:public") fn="network:public-ip" ;;
+    "git:branches:date") fn="git:branches" ;;
+    "git:settings") fn="git:config" ;;
+esac
 
 #--------------------------------------------------------------------
 # Plugins

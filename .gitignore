@@ -3,3 +3,4 @@
 .idea/workspace.xml
 .phpstorm.meta.php
 *.iml
+bin/mac-tui

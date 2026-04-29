@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+mkdir -p "${ROOT}/bin"
+cd "${ROOT}"
+go build -o "${ROOT}/bin/mac-tui" ./cmd/mac
+echo "Built ${ROOT}/bin/mac-tui"
